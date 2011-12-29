@@ -251,7 +251,7 @@ function option($name = null, $values = null)
 function option_isset($name)
 { 
   $res = option($name);
-  return ( isset( $res);
+  return isset( $res);
 }
 
 // syntactic sugar
@@ -406,7 +406,7 @@ function run($env = null)
   $lim_dir   = dirname(__FILE__);
   option('dir.root',           $root_dir);
   option('base_path',          $base_path);
-  option('base_uri',           $base_uri); // set it manually if you use url_rewriting
+  option('base.uri',           $base_uri); // set it manually if you use url_rewriting
   option('dir.limonade',       file_path($lim_dir));
   option('dir.limonade.views', file_path($lim_dir, 'limonade', 'views'));
   option('dir.limonade.public',file_path($lim_dir, 'limonade', 'public'));
