@@ -239,29 +239,35 @@ function option($name = null, $values = null)
 * 
 * <code>
 *   // fails with  [ PHP Fatal error:  Can't use function return value in write context ]
-*   if ( isset( option('dir.views) ) ) { }
+*   if ( isset( option('dir.views') ) ) { }
 * 
 *   // Works just fine
-*   if ( option_isset('dir.views) ) { }
+*   if ( option_isset('dir.views') ) { }
+* 
+*   // Testing for array values
+*   if ( option_isset('db.conf','dsn') ) { }
 * </code>
 * 
 * @param string $name => the option key to test for
+* @param mixed $key => the array key to test for OR if boolean tests for empty array
 * @return boolean  TRUE if value is set, FALSE if value is undefined ie: NULL
 */
-function option_isset($name)
+function option_isset($name, $key=NULL)
 { 
   $res = option($name);
-  return isset( $res);
+  if ( is_array($res) && is_bool($key) )   { return ! empty($res); }
+  if ( is_array($res) && is_string($key) ) { return isset( $res[$key] ); }
+  return isset($res);
 }
 
 // syntactic sugar
-function isset_option($name)     { return option_isset($name); }
+function isset_option($name, $key=NULL)     { return option_isset($name, $key); }
 // syntactic sugar:  reads better when testing for the value
-function option_defined($name)   { return option_isset($name); }
+function option_defined($name, $key=NULL)   { return option_isset($name, $key); }
 // syntactic sugar:  reads better when testing for the value
 // returns the opposite of option_isset()
-function option_undefined($name) { return ! option_isset($name); }
-function option_missing($name)   { return ! option_isset($name); }
+function option_undefined($name, $key=NULL) { return ! option_isset($name, $key); }
+function option_missing($name, $key=NULL)   { return ! option_isset($name, $key); }
 
 /**
  * Shortcut to test for presence and value of an option
@@ -270,7 +276,7 @@ function option_missing($name)   { return ! option_isset($name); }
  * 
  * <code>
  *    // the long way
- *    if ( option_isset('dir.views) && ( option('dir.views') === 'some value' ) ) { }
+ *    if ( option_isset('dir.views') && ( option('dir.views') === 'some value' ) ) { }
  * 
  *    // the smart way
  *    if ( option_equals('dir.views', 'some value') ) { }

@@ -55,7 +55,7 @@ test_case("Output");
     
     # Testing layout + view (template files case)
     $views_dir = dirname(__FILE__) . '/apps/views/';
-    option('views_dir', $views_dir);
+    option('dir.views', $views_dir);
 
     $view      = 'hello_world.html.php';
     $layout    = 'layouts/default.html.php';
@@ -134,7 +134,7 @@ HTML;
       elseif(file_exists($view_path) && !array_key_exists('content', $locals))
       {
         // a view file but not a layout
-        $view_path = file_path(option('views_dir'), basename($content_or_func, ".html.php") . "_filtered.html.php");
+        $view_path = file_path(option('dir.views'), basename($content_or_func, ".html.php") . "_filtered.html.php");
       }
       else
       {
@@ -149,7 +149,7 @@ HTML;
     assert_match("/$lorem∞FILTERED∞/", $html);
     
     $views_dir = dirname(__FILE__) . '/apps/views/';
-    option('views_dir', $views_dir);
+    option('dir.views', $views_dir);
     $view   = 'hello_world.html.php';
     $layout = 'layouts/default.html.php';
     $html = render($view, $layout, array('lorem' => $lorem));

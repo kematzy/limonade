@@ -26,6 +26,61 @@ test_case("Main");
      assert_equal($my_first_option[1], 456);
    }
    
+   function test_main_option_isset()
+   {
+     option('option.isset'); # no value given so it's NULL
+     assert_false( option_isset('option.isset') );
+     assert_false( isset_option('option.isset') );
+     option('option.isset', 'a'); # no longer NULL
+     assert_true( option_isset('option.isset') );
+     assert_true( isset_option('option.isset') );
+     option('option.isset.array', array() ); # no longer NULL
+     assert_true( option_isset('option.isset.array') );
+     assert_false( option_isset('option.isset.array', true) ); # the array is empty!!
+     assert_true( isset_option('option.isset.array') );
+     option('option.isset.array2', array('a' => '1', 'b' => '2') ); # no longer NULL
+     assert_true( option_isset('option.isset.array2',true) ); # testing if empty
+     assert_true( isset_option('option.isset.array2','a') ); # testing if the key is set
+     assert_false( option_isset('option.isset.array2','non-existant') ); # testing if the key is set
+   }
+   
+   function test_main_option_defined()
+   {
+     option('option.defined'); # no value given so it's NULL
+     assert_false( option_defined('option.defined') );
+     assert_false( option_isset('option.defined') );
+     option('option.defined', 'a'); # no longer NULL
+     assert_true( option_defined('option.defined') );
+     assert_true( option_isset('option.defined') );
+   }
+   
+   function test_main_option_undefined()
+   {
+     option('option.undefined'); # no value given so it's NULL
+     assert_true( option_undefined('option.undefined') );
+     assert_false( option_isset('option.undefined') );
+     option('option.undefined', 'a'); # no longer NULL
+     assert_false( option_undefined('option.undefined') );
+     assert_true( option_isset('option.undefined') );
+   }
+   
+   function test_main_option_equals()
+   {
+     option('option.equals'); # no value given so it's NULL
+     assert_true( option_undefined('option.equals') );
+     assert_false( option_equals('option.equals', 'a') );
+     option('option.equals', 'a'); # no longer NULL
+     assert_false( option_undefined('option.equals') );
+     assert_true( option_equals('option.equals', 'a') );
+     assert_false( option_equals('option.equals', 'b') );
+     $arr = array('a' => '1', 'b' => '2');
+     $arr2 = array('b' => '2', 'a' => '1');
+     option('option.equals', $arr);
+     assert_true( option_equals('option.equals', $arr) );
+     assert_false( option_equals('option.equals', $arr2) );
+     assert_false( option_equals('option.equals', 'b') );
+   }
+   
    function test_main_params()
    {
      assert_empty(params());
@@ -82,8 +137,11 @@ test_case("Main");
    function test_main_app_file()
    {
      $app_file = strtolower(app_file());
+     # echo "\n\n app_file = [$app_file]\n\n";
      $env = env();
-     assert_equal($app_file, strtolower($env['SERVER']['PWD'].'/'.$env['SERVER']['PHP_SELF']));
+     $expected = strtolower($env['SERVER']['PWD'].'/'.$env['SERVER']['PHP_SELF']);
+     # echo "\n\n\nEXPECTED = [$expected]\n\n\n";
+     assert_equal($app_file, $expected);
    }
    
    function test_main_call_if_exists()
@@ -108,10 +166,10 @@ test_case("Main");
      $obj = new TestCallIfExists();
      assert_equal(call_if_exists(array($obj, 'test'), 3), 30);
      assert_equal(call_if_exists(array('TestCallIfExists', 'testStatic'), 3), 60);
-		 if(version_compare(PHP_VERSION, '5.2.3', '>='))
-		 {			
-	     assert_equal(call_if_exists('TestCallIfExists::testStatic', 3), 60);
-		 }
+     if(version_compare(PHP_VERSION, '5.2.3', '>='))
+     {      
+       assert_equal(call_if_exists('TestCallIfExists::testStatic', 3), 60);
+     }
    }
    
    function test_main_define_unless_exists()
@@ -129,7 +187,9 @@ test_case("Main");
      $root = dirname(dirname(__FILE__));
      
      ob_start();
-     assert_empty(require_once_dir($root));
+     $c = require_once_dir($root);
+     # echo "\n\n require_once_dir(\$root) =  [ ". var_export($c, true)." ]";
+     assert_empty($c);
      $files = require_once_dir($root, "AUTHORS");
      assert_empty(ob_get_contents());
      ob_clean();
@@ -204,7 +264,7 @@ test_case("Main");
      $ssite_url = 'https://www.limonade-php.net';
      assert_equal(url_for($ssite_url), $ssite_url);
      
-     option('base_uri', '?');
+     option('base.uri', '?');
      $url = url_for('test', array('p1' => 'lorem', 'p2' => 'ipsum'));
      assert_equal($url,'?/test&amp;p1=lorem&amp;p2=ipsum');
      $url = url_for('test', array(0 => 'lorem', 'p2' => 1));
@@ -212,33 +272,33 @@ test_case("Main");
      $url = url_for('test', array('p1' => 'mañana'));
      assert_equal($url,'?/test&amp;p1='.rawurlencode("mañana"));
 
-     option('base_uri', '/api');
+     option('base.uri', '/api');
      $url = url_for('test', array('p1' => 'lorem', 'p2' => 'ipsum'));
      assert_equal($url,'/api/test?p1=lorem&amp;p2=ipsum');
-	 }
+   }
 
-	 function test_main_htmlspecialchars_decode()
-	 {
-		 assert_equal(limonade_htmlspecialchars_decode('&quot;'), '"');
-		 assert_equal(limonade_htmlspecialchars_decode('&lt;'), '<');
-		 assert_equal(limonade_htmlspecialchars_decode('&gt;'), '>');
-		 assert_equal(limonade_htmlspecialchars_decode('&amp;'), '&');
+   function test_main_htmlspecialchars_decode()
+   {
+     assert_equal(limonade_htmlspecialchars_decode('&quot;'), '"');
+     assert_equal(limonade_htmlspecialchars_decode('&lt;'), '<');
+     assert_equal(limonade_htmlspecialchars_decode('&gt;'), '>');
+     assert_equal(limonade_htmlspecialchars_decode('&amp;'), '&');
      echo htmlspecialchars_decode('&#39;', ENT_QUOTES);
-		 assert_equal(limonade_htmlspecialchars_decode('&#39;', ENT_QUOTES), '\'');
-		 assert_equal(limonade_htmlspecialchars_decode('&#039;', ENT_QUOTES), '\'');
-	 }
+     assert_equal(limonade_htmlspecialchars_decode('&#39;', ENT_QUOTES), '\'');
+     assert_equal(limonade_htmlspecialchars_decode('&#039;', ENT_QUOTES), '\'');
+   }
 	
-	 function test_main_benchmark()
-	 {
-	 	 $bench = benchmark();
-		 assert_true(is_array($bench));
-		 assert_true(array_key_exists('execution_time', $bench));
-		 if(function_exists('memory_get_usage'))
-		 {
-			 assert_true(defined('LIM_START_MEMORY'));
-		   assert_true(array_key_exists('start_memory', $bench));
-		   assert_equal(LIM_START_MEMORY, $bench['start_memory']);
-		 }
-	 }
+   function test_main_benchmark()
+   {
+     $bench = benchmark();
+     assert_true(is_array($bench));
+     assert_true(array_key_exists('execution_time', $bench));
+     if(function_exists('memory_get_usage'))
+     {
+       assert_true(defined('LIM_START_MEMORY'));
+       assert_true(array_key_exists('start_memory', $bench));
+       assert_equal(LIM_START_MEMORY, $bench['start_memory']);
+     }
+   }
    
 end_test_case();
