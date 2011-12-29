@@ -307,20 +307,15 @@ function test_cli_format($text, $format)
     return chr(27) . "[01;{$format} m{$text}" . chr(27) . "[00m";
 }
 
-## 
-# Do HTTP request and return the response content.
-# 
-# @param string $url
-# 
-# @param string $method
-# 
-# @param bool $include_header
-# 
-# @return string
-# 
-# @author Nando Vieira
-#
-## 
+/**
+ * Do HTTP request and return the response content.
+ * 
+ * @param string $url
+ * @param string $method
+ * @param bool $include_header
+ * @return string
+ * @author Nando Vieira
+ */
 function test_request($url, $method="GET", $include_header=false, $post_data=array(), $http_header=array()) 
 { 
   $method = strtoupper($method);

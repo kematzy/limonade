@@ -39,7 +39,7 @@ function initialize()
  * <code>
  * function autoload_controller($callback)
  * {
- *   require_once_dir(option('controllers_dir'));
+ *   require_once_dir(option('dir.controllers'));
  * }
  * </code>
  * 
