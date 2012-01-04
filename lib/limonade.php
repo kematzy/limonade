@@ -1063,7 +1063,7 @@ function error_server_error_output($errno, $errstr, $errfile, $errline)
     {
       $is_http_error = http_response_status_is_valid($errno);
       $args = compact('errno', 'errstr', 'errfile', 'errline', 'is_http_error');
-      option('dir.views', option('dir.limonade.views'));
+      option('dir.views', option('limonade.dir.views'));
       $html = render('error.html.php', null, $args);	
       option('dir.views', option('dir.views.errors'));
       return html($html, error_layout(), $args);
@@ -1131,7 +1131,7 @@ function error_notices_render()
     $notices = error_notice();
     error_notice(null); // reset notices
     $c_view_dir = option('dir.views'); // keep for restore after render
-    option('dir.views', option('dir.limonade.views'));
+    option('dir.views', option('limonade.dir.views'));
     $o = render('_notices.html.php', null, array('notices' => $notices));
     option('dir.views', $c_view_dir); // restore current views dir
     return $o;
