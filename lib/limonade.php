@@ -3142,5 +3142,9 @@ function fallbacks_for_not_implemented_functions()
 }
 
 
+
+# initialize the app
+app_init();
+
 #/EOF
 ?>
