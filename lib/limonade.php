@@ -219,7 +219,7 @@ function option($name = null, $values = null)
   static $options = array();
   $args = func_get_args();
   $name = array_shift($args);
-  if(is_null($name)) { return $options; }
+  if(is_null($name)) { ksort($options); return $options; }
   if(!empty($args))
   {
     $options[$name] = count($args) > 1 ? $args : $args[0];
