@@ -2386,7 +2386,7 @@ function debug($var, $output_as_html = true)
       $out = var_export($var, true);
       break;
   }
-  if ($output_as_html) { $out = "<pre>\n" . h($out) ."</pre>"; }
+  if ($output_as_html) { $out = "<pre><code>\n" . h($out) ."</code></pre>"; }
   return $out;
 }
 
