@@ -1832,6 +1832,29 @@ function render($content_or_func, $layout = '', $locals = array())
 */
 function partial($content_or_func, $locals = array())
 {
+  # check if passed a collection
+  if (isset($locals['collection']) && is_array($locals['collection'])) 
+  { 
+    $output = array();
+    $collection = $locals['collection'];
+    unset($locals['collection']);
+    # replace the .php in the backend. it is the default anyway, so no need to type
+    $content_or_func = str_replace('.php', '', $content_or_func);
+    # extract the core parts 
+    $tmp_arr = pathinfo($content_or_func);
+    # get the format from the last part if set, else default to HTML
+    $format = ( isset($tmp_arr['extension'])) ? $tmp_arr['extension'] : 'html';
+    # 
+    $tmpl_name = ( isset($tmp_arr['extension'])) ? str_replace('.' . $format,'', $tmp_arr['basename']) : $tmp_arr['basename'];
+    # 
+    $tmpl_full_name = ( $tmp_arr['dirname'] == '.') ? "$tmpl_name.$format.php" : $tmp_arr['dirname'] ."/$tmpl_name.$format.php";
+    
+    foreach ($collection as $$tmpl_name)
+    { 
+      $output[] = render($tmpl_full_name, null, array_merge($locals, array($tmpl_name => $$tmpl_name) ) );
+    }
+    return implode("\n", $output);
+  }
   return render($content_or_func, null, $locals);
 }
 
