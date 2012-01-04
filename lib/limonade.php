@@ -3143,6 +3143,147 @@ function fallbacks_for_not_implemented_functions()
 
 
 
+// -----
+// ### 10. LOADERS
+
+
+/**
+* Load core (Limonade Core Extension) from the core directory
+* 
+* @param string/array $string =>  core(s) in lowercase_underscored-dasherised
+* @return void 
+* 
+* <code>
+*     load_core('db'); // loads  /lib/core/db.core.php file
+*     
+*     load_core('css', 'js', 'assets', ...);
+* </code>
+*/
+function load_core()
+{ 
+  static $_cores = array();
+  $cores = func_get_args();
+  
+  foreach ($cores as $core)
+  { 
+    if (in_array($core, $_cores)) { continue; }
+    $core_file = option('app.dir.lib.core') . "/$core.core.php";
+    if ( ! file_exists($core_file)) { throw new Exception("Requested Core file '$core_file' was not found!"); }
+    require_once($core_file);
+    $_cores[] = $core;
+  }
+}
+
+/**
+* Loads all the core files in the <tt>app/lib/core</tt> directory.
+* @return (void) 
+* 
+*     load_all_cores(); 
+*/
+function load_all_cores() { require_once_dir( APP_DIR_ROOT . "/lib/core/"); }
+
+/**
+* Load helper functions from the <tt>lib/helpers</tt> directory file 
+* (faster than waiting for the __autoload function)
+* 
+* @param (string/array) $string  => helper(s) in lowercase_underscored
+* @return   => (void) 
+* 
+* <code>
+*     load_helper('blog');   // loads  /lib/helpers/blog.helper.php
+*     
+*     load_helper('post', 'category', 'tag', ...);
+* </code>
+*/
+function load_helper()
+{ 
+  static $_helpers = array();
+  $helpers = func_get_args();
+  
+  foreach ($helpers as $helper)
+  { 
+    if (in_array($helper, $_helpers)) { continue; }
+    $helper_file = option('app.dir.lib.helpers') . "/$helper.helper.php";
+    if ( ! file_exists($helper_file)) { throw new Exception("Requested Helpers file '$helper_file' was not found!"); }
+    require_once $helper_file;
+    $_helpers[] = $helper;
+  }
+}
+
+/**
+* Loads all the helper files in the <tt>app/lib/helpers</tt> directory.
+* @return (void) 
+* 
+*     load_all_helpers(); 
+*/
+function load_all_helpers() { require_once_dir( APP_DIR_ROOT . "/lib/helpers/"); }
+
+/**
+* Load Lext (Limonade Extension) from the <tt>lib/lexts</tt> directory
+* 
+* @param (string/array) $string =>  lext(s) in lowercase_underscored-dasherised
+* @return (void) 
+* 
+* <code>
+*     load_lext('blog');  // loads  /lib/lexts/blog.lext.php
+*     
+*     load_lext('css', 'js', 'assets', ...);
+* </code>
+* 
+*/
+function load_lext()
+{ 
+  static $_lexts = array();
+  $lexts = func_get_args();
+  
+  foreach ($lexts as $lext)
+  { 
+    if (in_array($lext, $_lexts)) { continue; }
+    $lext_file = option('app.dir.lib.lexts') . "/$lext.lext.php";
+    if ( ! file_exists($lext_file)) { throw new Exception("Requested Lext file '$lext_file' was not found!"); }
+    require_once($lext_file);
+    $_lexts[] = $lext;
+  }
+}
+
+/**
+* Loads all the lexts files in the <tt>app/lib/lexts</tt> directory.
+* @return (void) 
+* 
+*     load_all_lexts(); 
+*/
+function load_all_lexts() { require_once_dir( APP_DIR_ROOT . "/lib/lexts/"); }
+
+
+/**
+* Load Configuration files from the <tt>app/conf</tt> directory
+* 
+* @param (string/array) $string =>  configs(s) in lowercase_underscored
+* @return (void) 
+* 
+* <code>
+*     load_config('blog');  // loads  app/conf/blog.conf.php
+*     
+*     load_config('css', 'js', 'assets', ...);
+* </code>
+* 
+*/
+function load_config()
+{ 
+  static $_configs = array();
+  $confs = func_get_args();
+  
+  foreach ($confs as $conf) 
+  { 
+    if (in_array($conf, $_configs)) { continue; }
+    $conf_file = option('app.dir.conf') . "/$conf.conf.php";
+    if ( ! file_exists($conf_file)) { throw new Exception("Requested Configuration file '$conf_file' was not found!"); }
+    include($conf_file);
+    $_configs[] = $conf;
+  }
+}
+
+
 # initialize the app
 app_init();
 
