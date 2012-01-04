@@ -57,9 +57,7 @@ define('LIM_NAME',              'Fresh_and_Minty_Limonade_App');
 define('LIM_START_MICROTIME',   (float)substr(microtime(), 0, 10));
 define('LIM_SESSION_NAME',      'LIMONADE'.str_replace('.','x',LIMONADE));
 define('LIM_SESSION_FLASH_KEY', '_lim_flash_messages');
-if(function_exists('memory_get_usage')) { 
-  define('LIM_START_MEMORY',      memory_get_usage()); 
-}
+if(function_exists('memory_get_usage')) { define('LIM_START_MEMORY', memory_get_usage()); }
 define('E_LIM_HTTP',            32768);
 define('E_LIM_PHP',             65536);
 define('E_LIM_DEPRECATED',      35000);
@@ -97,8 +95,7 @@ function unregister_globals()
 
 if(ini_get('register_globals'))
 { 
-  unregister_globals( '_POST', '_GET', '_COOKIE', '_REQUEST', '_SERVER', 
-                      '_ENV', '_FILES');
+  unregister_globals('_POST','_GET','_COOKIE','_REQUEST','_SERVER','_ENV','_FILES');
   ini_set('register_globals', 0);
 }
 
@@ -815,39 +812,6 @@ function event($event = null, $callback = null, $args = array())
 #     }
 #   }
 #   return $extras;
-# }
-# 
-# /**
-#  * Shortcut function for @see{extras()} for naming consistency.
-#  *
-#  * @param string $name the name of the extra to use
-#  */
-# function use_extra($name) { extras((string) $name); }
-# 
-# function use_helper($name)
-# { 
-#   $file = file_path(option('dir.lib.helpers'), $name.'.helper.php');
-#   if(file_exists($file))
-#   { 
-#     require_once($file);
-#   }
-#   else
-#   { 
-#     error_notice( E_WARNING, sprintf('Helper file "%s" not found.', $file ));
-#   }
-# }
-# 
-# function use_model($name)
-# { 
-#   $file = file_path(option('dir.app.models'), $name.'.model.php');
-#   if(file_exists($file))
-#   { 
-#     require_once($file);
-#   }
-#   else
-#   { 
-#     error_notice( E_WARNING, sprintf('Model file "%s" not found.', $file ));
-#   }
 # }
 # 
 
