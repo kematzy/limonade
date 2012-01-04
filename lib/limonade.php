@@ -1761,7 +1761,8 @@ function render($content_or_func, $layout = '', $locals = array())
   $args = func_get_args();
   $content_or_func = array_shift($args);
   $layout = count($args) > 0 ? array_shift($args) : layout();
-  $view_path = file_path(option('dir.views'),$content_or_func);
+  $ext = ( substr($content_or_func, -4) === '.php' ) ? '' : '.php';
+  $view_path = file_path(option('dir.views'),$content_or_func . $ext);
   
   if(function_exists('before_render'))
   { 
