@@ -150,8 +150,8 @@ dispatch(array("/_lim_css/*.css", array('_lim_css_filename')), 'render_limonade_
   * @return string
   */
   function render_limonade_css()
-  {
-    option('dir.views', file_path(option('dir.limonade.public'), 'css'));
+  { 
+    option('dir.views', file_path(option('limonade.dir.public'), 'css'));
     $fpath = file_path(params('_lim_css_filename').".css");
     return css($fpath, null); # with no layout
   }
@@ -165,8 +165,8 @@ dispatch(array("/_lim_public/**", array('_lim_public_file')), 'render_limonade_f
   * @return void
   */
   function render_limonade_file()
-  {
-    $fpath = file_path(option('dir.limonade.public'), params('_lim_public_file'));
+  { 
+    $fpath = file_path(option('limonade.dir.public'), params('_lim_public_file'));
     return render_file($fpath, true);
   }
 
@@ -389,7 +389,80 @@ function set_or_default($name, $value, $default)
   return set($name, value_or_default($value, $default));
 }
 
-/**
+
+function app_init($env = NULL)
+{ 
+  if(is_null($env)) $env = env();
+  
+  // 0. Set default configuration
+  $root_dir  = dirname(dirname(app_file()));
+  $base_path = dirname(file_path($env['SERVER']['SCRIPT_NAME']));
+  $base_file = basename($env['SERVER']['SCRIPT_NAME']);
+  $base_uri  = file_path($base_path, (($base_file == 'index.php') ? '?' : $base_file.'?'));
+  $lim_dir   = dirname(__FILE__);
+  
+  # set the 
+  option('dir.root',              $root_dir);
+  option('base.path',             $base_path);
+  option('base.uri',              $base_uri); // set it manually if you use url_rewriting
+  
+  # Limonade related paths
+  option('limonade.dir',          file_path($lim_dir));
+  option('limonade.dir.root',     file_path($lim_dir));
+  option('limonade.dir.views',    file_path($lim_dir, 'limonade', 'views'));
+  option('limonade.dir.public',   file_path($lim_dir, 'limonade', 'public'));
+  option('limonade.dir.core',     file_path($lim_dir, 'core'));
+  option('limonade.dir.helpers',  file_path($lim_dir, 'helpers'));
+  option('limonade.dir.lexts',    file_path($lim_dir, 'lexts'));
+  
+  
+  # application related paths 
+  option('app.dir',               file_path( APP_DIR_ROOT ));
+  option('app.dir.root',          file_path( APP_DIR_ROOT ));
+  option('app.dir.assets',        file_path( option('app.dir'), 'assets'));
+  option('app.dir.conf',          file_path( option('app.dir'), 'conf'));
+  option('app.dir.lib',           file_path( option('app.dir'), 'lib'));
+  option('app.dir.lib.core',      file_path( option('app.dir.lib'), 'core'));
+  option('app.dir.lib.helpers',   file_path( option('app.dir.lib'), 'helpers'));
+  option('app.dir.lib.lexts',     file_path( option('app.dir.lib'), 'lexts'));
+  option('app.dir.models',        file_path( option('app.dir'), 'models'));
+  option('app.dir.views',         file_path( option('app.dir'), 'views'));
+  
+  option('app.dir.public',        file_path( dirname(option('app.dir')), 'public'));
+  
+  
+  option('dir.app',               file_path( APP_DIR_ROOT ));
+  option('dir.lib',               file_path( option('dir.app'), 'lib'));
+  
+  option('dir.public',            file_path( option('app.dir.public') ));
+  
+  option('dir.views',             file_path( option('app.dir.views') ));
+  
+  option('dir.controllers',       file_path( option('app.dir'), 'controllers'));
+  option('dir.views.errors',      option('limonade.dir.views'));
+  
+  
+  
+  option('env',                   ENV_PRODUCTION);
+  
+  # Sessions
+  option('session.enabled',       TRUE); # true/false => enables session functionality
+  option('session.name',          LIM_SESSION_NAME); # the name of your session
+  
+  # 
+  option('debug',                 true);
+  
+  
+  
+  option('encoding',              'utf-8');
+  option('signature',             LIM_NAME); # X-Limonade header value or false to hide it
+  option('gzip',                  false);
+  option('x-sendfile',            0); # 0: disabled, 
+                                      # X-SENDFILE: for Apache and Lighttpd v. >= 1.5,
+                                      # X-LIGHTTPD-SEND-FILE: for Apache and Lighttpd v. < 1.5
+  
+}
+/** 
 * Running application
 * 
 * @param string $env 
@@ -398,49 +471,7 @@ function set_or_default($name, $value, $default)
 * 
 */ 
 function run($env = null)
-{
-  if(is_null($env)) $env = env();
-   
-  // 0. Set default configuration
-  $root_dir  = dirname(app_file());
-  $base_path = dirname(file_path($env['SERVER']['SCRIPT_NAME']));
-  $base_file = basename($env['SERVER']['SCRIPT_NAME']);
-  $base_uri  = file_path($base_path, (($base_file == 'index.php') ? '?' : $base_file.'?'));
-  $lim_dir   = dirname(__FILE__);
-  option('dir.root',           $root_dir);
-  option('base_path',          $base_path);
-  option('base.uri',           $base_uri); // set it manually if you use url_rewriting
-  option('dir.limonade',       file_path($lim_dir));
-  option('dir.limonade.views', file_path($lim_dir, 'limonade', 'views'));
-  option('dir.limonade.public',file_path($lim_dir, 'limonade', 'public'));
-  option('dir.public',         file_path($root_dir, 'public'));
-  option('dir.views',          file_path($root_dir, 'views'));
-  option('dir.controllers',    file_path($root_dir, 'controllers'));
-  option('dir.lib',            file_path($root_dir, 'lib'));
-  option('dir.views.errors',   option('dir.limonade.views'));
-  # custom dirs
-  option('dir.lib.cores',      file_path($lim_dir, 'core'));
-  option('dir.lib.core',       file_path($lim_dir, 'core'));
-  option('dir.lib.helpers',    file_path($lim_dir, 'helpers'));
-  option('dir.lib.lexts',      file_path($lim_dir, 'lexts'));
-  
-  option('dir.db',             file_path(dirname($root_dir), 'db'));
-  option('dir.app',            file_path(dirname($lim_dir)));
-  option('dir.app.assets',     file_path(dirname($lim_dir), 'assets'));
-  option('dir.app.conf',       file_path(dirname($lim_dir), 'conf'));
-  option('dir.app.lib',        file_path($lim_dir));
-  option('dir.app.models',     file_path(dirname($lim_dir), 'models'));
-  option('dir.app.views',      file_path(dirname($lim_dir), 'views'));
-  
-  option('env',                ENV_PRODUCTION);
-  option('debug',              true);
-  option('session',            LIM_SESSION_NAME); # true, false or the name of your session
-  option('encoding',           'utf-8');
-  option('signature',          LIM_NAME); # X-Limonade header value or false to hide it
-  option('gzip',               false);
-  option('x-sendfile',         0); # 0: disabled, 
-                                   # X-SENDFILE: for Apache and Lighttpd v. >= 1.5,
-                                   # X-LIGHTTPD-SEND-FILE: for Apache and Lighttpd v. < 1.5
+{ 
 
   // 1. Set handlers
   // 1.1 Set error handling
@@ -477,9 +508,9 @@ function run($env = null)
   // 4. Starting session
   event('session.before', true, array($env));
   
-  if(!defined('SID') && option('session'))
+  if(!defined('SID') && option('session.enabled'))
   {
-    if(!is_bool(option('session'))) { session_name(option('session')); }
+    session_name(option('session.name'));
     if(!session_start()) { trigger_error("An error occurred while trying to start the session", E_USER_WARNING); }
   }
 
