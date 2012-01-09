@@ -3144,7 +3144,7 @@ function fallbacks_for_not_implemented_functions()
 /**
 * Load core (Limonade Core Extension) from the core directory
 * 
-* @param string/array $string =>  core(s) in lowercase_underscored-dasherised
+* @param string/array $string =>  core(s) in lowercase_underscored
 * @return void 
 * 
 * <code>
@@ -3161,8 +3161,11 @@ function load_core()
   foreach ($cores as $core)
   { 
     if (in_array($core, $_cores)) { continue; }
-    $core_file = option('app.dir.lib.core') . "/$core.core.php";
-    if ( ! file_exists($core_file)) { throw new Exception("Requested Core file '$core_file' was not found!"); }
+    $core_file = APP_DIR_ROOT . "/lib/core/$core.core.php";
+    if ( ! file_exists($core_file)) 
+    {  
+      halt(SERVER_ERROR, __FUNCTION__."(): Requested Core file [ $core_file ] was not found!");
+    }
     require_once($core_file);
     $_cores[] = $core;
   }
@@ -3197,8 +3200,11 @@ function load_helper()
   foreach ($helpers as $helper)
   { 
     if (in_array($helper, $_helpers)) { continue; }
-    $helper_file = option('app.dir.lib.helpers') . "/$helper.helper.php";
-    if ( ! file_exists($helper_file)) { throw new Exception("Requested Helpers file '$helper_file' was not found!"); }
+    $helper_file = APP_DIR_ROOT . "/lib/helpers/$helper.helper.php";
+    if ( ! file_exists($helper_file)) 
+    { 
+      halt(SERVER_ERROR, __FUNCTION__ . "(): Requested Helper file [$helper_file] was not found!"); 
+    }
     require_once $helper_file;
     $_helpers[] = $helper;
   }
@@ -3233,8 +3239,14 @@ function load_lext()
   foreach ($lexts as $lext)
   { 
     if (in_array($lext, $_lexts)) { continue; }
-    $lext_file = option('app.dir.lib.lexts') . "/$lext.lext.php";
-    if ( ! file_exists($lext_file)) { throw new Exception("Requested Lext file '$lext_file' was not found!"); }
+    $lexts_dir = APP_DIR_ROOT .  "/lib/lexts";
+    # if directory with lext name exists, look for lext file within it, else default path
+    $lext_file = is_dir("$lexts_dir/$lext") ? "$lexts_dir/$lext/$lext.lext.php" : "$lexts_dir/$lext.lext.php";
+    # bail out or load it
+    if ( ! file_exists($lext_file)) 
+    { 
+      halt(SERVER_ERROR, __FUNCTION__ . "(): Requested Lext file [$lext_file] was not found!"); 
+    }
     require_once($lext_file);
     $_lexts[] = $lext;
   }
@@ -3270,8 +3282,11 @@ function load_config()
   foreach ($confs as $conf) 
   { 
     if (in_array($conf, $_configs)) { continue; }
-    $conf_file = option('app.dir.conf') . "/$conf.conf.php";
-    if ( ! file_exists($conf_file)) { throw new Exception("Requested Configuration file '$conf_file' was not found!"); }
+    $conf_file = APP_DIR_ROOT . "/conf/$conf.conf.php";
+    if ( ! file_exists($conf_file)) 
+    { 
+      halt(SERVER_ERROR, "Requested Configuration file '$conf_file' was not found!"); 
+    }
     include($conf_file);
     $_configs[] = $conf;
   }
