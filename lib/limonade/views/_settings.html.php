@@ -117,7 +117,7 @@
   <? if (function_exists('page_vars')): ?>
   <div id="pagevars">
     <h3>PAGE_VARS <span>(App)</span></h3>
-    <? $o = page_vars()->__attributes; ?>
+    <? $o = @page_vars()->__attributes; ?>
     <? if( ! empty($o) ): ?>
     <a class="toggle">HIDE</a>
     <table id="pagevars-info" class="req">
