@@ -389,8 +389,15 @@ function set_or_default($name, $value, $default)
   return set($name, value_or_default($value, $default));
 }
 
-
-function app_init($env = NULL)
+/** 
+* Running application
+* 
+* @param string $env 
+* 
+* @return void
+* 
+*/ 
+function run($env = null)
 { 
   if(is_null($env)) $env = env();
   
@@ -441,8 +448,7 @@ function app_init($env = NULL)
   option('dir.controllers',       file_path( option('app.dir'), 'controllers'));
   option('dir.views.errors',      option('limonade.dir.views'));
   
-  
-  
+  # 
   option('env',                   ENV_PRODUCTION);
   
   # Sessions
@@ -450,28 +456,16 @@ function app_init($env = NULL)
   option('session.name',          LIM_SESSION_NAME); # the name of your session
   
   # 
-  option('debug',                 true);
-  
+  option('debug',                 false);
   
   
   option('encoding',              'utf-8');
   option('signature',             LIM_NAME); # X-Limonade header value or false to hide it
   option('gzip',                  false);
   option('x-sendfile',            0); # 0: disabled, 
-                                      # X-SENDFILE: for Apache and Lighttpd v. >= 1.5,
-                                      # X-LIGHTTPD-SEND-FILE: for Apache and Lighttpd v. < 1.5
+                                     # X-SENDFILE: for Apache and Lighttpd v. >= 1.5,
+                                     # X-LIGHTTPD-SEND-FILE: for Apache and Lighttpd v. < 1.5
   
-}
-/** 
-* Running application
-* 
-* @param string $env 
-* 
-* @return void
-* 
-*/ 
-function run($env = null)
-{ 
 
   // 1. Set handlers
   // 1.1 Set error handling
@@ -3284,8 +3278,6 @@ function load_config()
 }
 
 
-# initialize the app
-app_init();
 
 #/EOF
 ?>
