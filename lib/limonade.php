@@ -894,7 +894,10 @@ function halt($errno = SERVER_ERROR, $msg = '', $debug_args = null)
    $oldmsg = array_shift($args);
    $errno = empty($oldmsg) ? SERVER_ERROR : $oldmsg;
   }
-  else if(!empty($args)) $msg = array_shift($args);
+  else
+  { 
+    if(!empty($args)) { $msg = array_shift($args); }
+  }
 
   if(empty($msg) && $errno == NOT_FOUND) $msg = request_uri();
   if(empty($msg)) $msg = "";
@@ -2399,7 +2402,7 @@ function debug($var, $output_as_html = true)
       $out = var_export($var, true);
       break;
   }
-  if ($output_as_html) { $out = "<pre><code>\n" . h($out) ."</code></pre>"; }
+  if ($output_as_html) { $out = "<pre><code>" . h($out) ."</code></pre>"; }
   return $out;
 }
 
