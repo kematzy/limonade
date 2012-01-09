@@ -3294,6 +3294,15 @@ function load_config()
 }
 
 
+/**
+* Checks the env value and returns boolean (TRUE/FALSE) depending 
+* on the current active environment.
+* 
+* @return (void) 
+*/
+function in_development_mode() { return ( option('env') === ENV_DEVELOPMENT ); }
+function in_production_mode()  { return ( option('env') === ENV_PRODUCTION ); }
+
 
 #/EOF
 ?>
