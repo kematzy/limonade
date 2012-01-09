@@ -1314,6 +1314,22 @@ function request_is_head($env = null)
 }
 
 /**
+* Checks if request is of type XMLHTTPRequest
+*
+* 
+* @return bool
+* 
+*/
+function request_is_xhr()
+{ 
+  return ( !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'
+         ) ? true : false;
+}
+# syntactic sugar
+function request_is_ajax() { return request_is_xhr(); }
+
+/**
 * Returns allowed request methods
 *
 * @return array
