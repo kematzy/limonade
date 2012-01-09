@@ -457,6 +457,8 @@ function run($env = null)
   
   # 
   option('debug',                 false);
+  # enable configuration settings output. Default: false
+  option('debug.settings',        false);
   
   
   option('encoding',              'utf-8');
@@ -2399,6 +2401,30 @@ function debug($var, $output_as_html = true)
   }
   if ($output_as_html) { $out = "<pre><code>\n" . h($out) ."</code></pre>"; }
   return $out;
+}
+
+/**
+ * Provides debugging output of all system settings, enabling easy inspection of
+ * all current values and settings.
+ * 
+ * Depends on option('debug.settings') being set and true, else outputs simple HTML comment.
+ * 
+ * @return string the html output displaying all the settings.
+ */
+
+function debug_settings()
+{ 
+  if ( option('debug.settings') ) 
+  { 
+    option('tmp.dir.views', option('limonade.dir.views'));
+    $o = render('_settings.html.php', null);
+    option('tmp.dir.views', NULL); # restore
+    return $o;
+  }
+  else
+  { 
+    return "<!-- debug.settings disabled -->";
+  }
 }
 
 /**
