@@ -151,7 +151,7 @@ dispatch(array("/_lim_css/*.css", array('_lim_css_filename')), 'render_limonade_
   */
   function render_limonade_css()
   { 
-    option('dir.views', file_path(option('limonade.dir.public'), 'css'));
+    option('tmp.dir.views', file_path(option('limonade.dir.public'), 'css'));
     $fpath = file_path(params('_lim_css_filename').".css");
     return css($fpath, null); # with no layout
   }
@@ -1017,7 +1017,7 @@ function error_not_found_output($errno, $errstr, $errfile, $errline)
     */ 
     function not_found($errno, $errstr, $errfile=null, $errline=null)
     {
-      option('dir.views', option('dir.views.errors'));
+      option('tmp.dir.views', option('dir.views.errors'));
       $msg = h(rawurldecode($errstr));
       return html("<h1>Page not found:</h1><p><code>{$msg}</code></p>", error_layout());
     }
@@ -1057,9 +1057,9 @@ function error_server_error_output($errno, $errstr, $errfile, $errline)
     {
       $is_http_error = http_response_status_is_valid($errno);
       $args = compact('errno', 'errstr', 'errfile', 'errline', 'is_http_error');
-      option('dir.views', option('limonade.dir.views'));
+      option('tmp.dir.views', option('limonade.dir.views'));
       $html = render('error.html.php', null, $args);	
-      option('dir.views', option('dir.views.errors'));
+      option('tmp.dir.views', option('dir.views.errors'));
       return html($html, error_layout(), $args);
     }
   }
@@ -1123,11 +1123,10 @@ function error_notices_render()
   if(option('debug') && option('env') > ENV_PRODUCTION)
   {
     $notices = error_notice();
-    error_notice(null); // reset notices
-    $c_view_dir = option('dir.views'); // keep for restore after render
-    option('dir.views', option('limonade.dir.views'));
+    error_notice(null); # reset notices
+    option('tmp.dir.views', option('limonade.dir.views'));
     $o = render('_notices.html.php', null, array('notices' => $notices));
-    option('dir.views', $c_view_dir); // restore current views dir
+    option('tmp.dir.views', NULL); # restore
     return $o;
   }
 }
@@ -1756,8 +1755,10 @@ function render($content_or_func, $layout = '', $locals = array())
   $content_or_func = array_shift($args);
   $layout = count($args) > 0 ? array_shift($args) : layout();
   $ext = ( substr($content_or_func, -4) === '.php' ) ? '' : '.php';
-  $view_path = file_path(option('dir.views'),$content_or_func . $ext);
-  
+  $view_path = option_isset('tmp.dir.views') ? 
+      file_path(option('tmp.dir.views'), $content_or_func . $ext) :
+      file_path(option('dir.views'), $content_or_func . $ext);
+    
   if(function_exists('before_render'))
   { 
     list($content_or_func, $layout, $locals, $view_path) = before_render($content_or_func, $layout, $locals, $view_path);    
