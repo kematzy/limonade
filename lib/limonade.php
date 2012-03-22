@@ -1749,6 +1749,10 @@ function route_find($method, $path)
 }
 
 
+function route_option($route, $key)
+{ 
+  return @$route['options'][$key];
+}
 
 
 // -----
