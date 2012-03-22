@@ -139,6 +139,31 @@
   </div> <!-- /page_vars -->
   <? endif; ?>
   
+  <? if (function_exists('current_user')): ?>
+  <div id="current_user">
+    <h3>CURRENT USER <span>(App)</span></h3>
+    <? $o = @current_user()->__attributes; ?>
+    <? if( ! empty($o) ): ?>
+    <a class="toggle">HIDE</a>
+    <table id="current_user-info" class="req">
+      <tr>
+        <th class="key">Variable</th>
+        <th class="value">Value</th>
+      </tr>
+      <? foreach($o as $key => $val): ?>
+      <tr>
+        <td><?= h($key); ?></td>
+        <td class="code"><div><?= debug($val); ?></div></td>
+      </tr>
+      <? endforeach; ?>
+    </table>
+    <? else: ?>
+    <p class="no-data">No current_user() set.</p>
+    <? endif; ?>
+    <div class="clear"></div>
+  </div> <!-- /current_user -->
+  <? endif; ?>
+
   <? if (function_exists('Settings')): ?>
   <div id="settings">
     <h3>SETTINGS <span>(App)</span></h3>
