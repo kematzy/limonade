@@ -69,10 +69,10 @@ define('X-SENDFILE',            10);
 define('X-LIGHTTPD-SEND-FILE',  20);
 
 # for PHP 5.3.0 <
-if(!defined('E_DEPRECATED'))         define('E_DEPRECATED',        8192);
-if(!defined('E_USER_DEPRECATED'))    define('E_USER_DEPRECATED',   16384);
+if (! defined('E_DEPRECATED'))         { define('E_DEPRECATED',        8192);  }
+if (! defined('E_USER_DEPRECATED'))    { define('E_USER_DEPRECATED',   16384); }
 # for PHP 5.2.0 <
-if (!defined('E_RECOVERABLE_ERROR')) define('E_RECOVERABLE_ERROR', 4096);
+if (! defined('E_RECOVERABLE_ERROR'))  { define('E_RECOVERABLE_ERROR', 4096);  }
 
 // -----
 // #### SETTING BASIC SECURITY
@@ -89,11 +89,11 @@ function unregister_globals()
   $args = func_get_args();
   foreach($args as $k => $v)
   { 
-    if(array_key_exists($k, $GLOBALS)){ unset($GLOBALS[$k]); }
+    if (array_key_exists($k, $GLOBALS)) { unset($GLOBALS[$k]); }
   }
 }
 
-if(ini_get('register_globals'))
+if (ini_get('register_globals'))
 { 
   unregister_globals('_POST','_GET','_COOKIE','_REQUEST','_SERVER','_ENV','_FILES');
   ini_set('register_globals', 0);
@@ -125,7 +125,7 @@ if (get_magic_quotes_gpc())
   ini_set('magic_quotes_gpc', 0);
 }
 
-if(function_exists('set_magic_quotes_runtime') && get_magic_quotes_runtime()) { set_magic_quotes_runtime(false); }
+if (function_exists('set_magic_quotes_runtime') && get_magic_quotes_runtime()) { set_magic_quotes_runtime(false); }
 
 /**
 * C. Disable error display
@@ -215,20 +215,20 @@ dispatch(array("/_lim_public/**", array('_lim_public_file')), 'render_limonade_f
 * 
 */ 
 function option($name = null, $values = null)
-{
+{ 
   static $options = array();
   $args = func_get_args();
   $name = array_shift($args);
-  if(is_null($name)) { ksort($options); return $options; }
-  if(!empty($args))
-  {
+  if (is_null($name)) { ksort($options); return $options; }
+  if (! empty($args))
+  { 
     $options[$name] = count($args) > 1 ? $args : $args[0];
   }
-  if(array_key_exists($name, $options)) { return $options[$name]; }
+  if (array_key_exists($name, $options)) { return $options[$name]; }
   return;
 }
 
-/**
+/** 
 * Tests if an option value is set (ie: not NULL)
 * 
 * Provides a safe way to test for the presence of an option value without incurring a
@@ -285,8 +285,8 @@ function option_missing($name, $key=NULL)   { return ! option_isset($name, $key)
  */
 function option_equals($name, $value)
 { 
-  if( option_undefined($name) ) { return FALSE; }
-  return ( option($name) === $value );
+  if (option_undefined($name)) { return FALSE; }
+  return (option($name) === $value);
 }
 
 /** 
@@ -317,37 +317,37 @@ function option_equals($name, $value)
 *
 */
 function params($name_or_array_or_null = null, $value = null)
-{
+{ 
   static $params = array();
   $args = func_get_args();
-
-  if(func_num_args() > 0)
-  {
+  
+  if (func_num_args() > 0)
+  { 
     $name = array_shift($args);
-    if(is_null($name))
-    {
+    if (is_null($name))
+    { 
       // Reset params
       $params = array();
       return $params;
     }
-    if(is_array($name))
-    {
+    if (is_array($name))
+    { 
       $params = array_merge($params, $name);
       return $params;
     }
     $nargs = count($args);
-    if($nargs > 0)
-    {
+    if ($nargs > 0)
+    { 
       $value = $nargs > 1 ? $args : $args[0];
       $params[$name] = $value;
     }
     return array_key_exists($name,$params) ? $params[$name] : null;
   }
-
+  
   return $params;
 }
 
-/**
+/** 
 * Set and returns template variables
 * 
 * If multiple values are provided, set $name variable with an array of those values.
@@ -361,20 +361,20 @@ function params($name_or_array_or_null = null, $value = null)
 * 
 */
 function set($name = null, $values = null)
-{
+{ 
   static $vars = array();
   $args = func_get_args();
   $name = array_shift($args);
-  if(is_null($name)) { return $vars; }
-  if(!empty($args))
-  {
+  if (is_null($name)) { return $vars; }
+  if (! empty($args))
+  { 
     $vars[$name] = count($args) > 1 ? $args : $args[0];
   }
-  if(array_key_exists($name, $vars)) { return $vars[$name]; }
+  if (array_key_exists($name, $vars)) { return $vars[$name]; }
   return $vars;
 }
 
-/**
+/** 
 * Sets a template variable with a value or a default value if value is empty
 * 
 * * @param string $name 
@@ -385,7 +385,7 @@ function set($name = null, $values = null)
 * 
 */ 
 function set_or_default($name, $value, $default)
-{
+{ 
   return set($name, value_or_default($value, $default));
 }
 
@@ -399,8 +399,8 @@ function set_or_default($name, $value, $default)
 */ 
 function run($env = null)
 { 
-  if(is_null($env)) $env = env();
-  
+  if (is_null($env)) { $env = env(); }
+   
   // 0. Set default configuration
   $root_dir  = dirname(dirname(app_file()));
   $base_path = dirname(file_path($env['SERVER']['SCRIPT_NAME']));
@@ -486,13 +486,10 @@ function run($env = null)
   event('configure.after', true, array($env));
   
   // 2.1 Set gzip compression if defined
-  if(is_bool(option('gzip')) && option('gzip'))
-  {
-    ini_set('zlib.output_compression', '1');
-  }
+  if (is_bool(option('gzip')) && option('gzip')) { ini_set('zlib.output_compression', '1'); }
   
   // 2.2 Set X-Limonade header
-  if($signature = option('signature')) { header("X-Limonade: $signature"); }
+  if ($signature = option('signature')) { header("X-Limonade: $signature"); }
 
   // 3. Loading libs
   event('libs.before', true, array($env));
@@ -500,58 +497,58 @@ function run($env = null)
   event('libs.after', true, array($env));
   
   fallbacks_for_not_implemented_functions();
-
+  
   // 4. Starting session
   event('session.before', true, array($env));
   
-  if(!defined('SID') && option('session.enabled'))
-  {
+  if (! defined('SID') && option('session.enabled'))
+  { 
     session_name(option('session.name'));
     if(!session_start()) { trigger_error("An error occurred while trying to start the session", E_USER_WARNING); }
   }
-
+  
   event('session.after', true, array($env));
   
   // 5. Set some default methods if needed
-  if(!function_exists('after'))
-  {
+  if (! function_exists('after'))
+  { 
     function after($output) { return $output; }
   }
-  if(!function_exists('route_missing'))
-  {
+  if (! function_exists('route_missing'))
+  { 
     function route_missing($request_method, $request_uri)
-    {
+    { 
       halt(NOT_FOUND, "($request_method) $request_uri");
     }
   }
-
+  
   event('initialize.before', true, array($env));
   
   call_if_exists('initialize');
-
+  
   event('initialize.after', true, array($env));
   
   
   // 6. Check request
-  if($rm = request_method($env))
-  {
-    if(request_is_head($env)) ob_start(); // then no output
-
-    if(!request_method_is_allowed($rm))
+  if ($rm = request_method($env))
+  { 
+    if (request_is_head($env)) { ob_start(); } // then no output
+    
+    if (! request_method_is_allowed($rm))
     { 
       halt(HTTP_NOT_IMPLEMENTED, "The requested method <code>'$rm'</code> is not implemented");
     }
-
+    
     // 6.1 Check matching route
-    if($route = route_find($rm, request_uri($env)))
-    {
+    if ($route = route_find($rm, request_uri($env)))
+    { 
       params($route['params']);
-
+      
       // 6.2 Load controllers dir
-      if(!function_exists('autoload_controller'))
-      {
+      if (! function_exists('autoload_controller'))
+      { 
         function autoload_controller($callback)
-        {
+        { 
           require_once_dir(option('dir.controllers'));
         }
       }
@@ -559,23 +556,23 @@ function run($env = null)
       event('controller_autoload.before', true, array($env, $route));
       
       autoload_controller($route['callback']);
-
+      
       event('controller_autoload.after', true, array($env, $route));
       
-      if(is_callable($route['callback']))
-      {
+      if (is_callable($route['callback']))
+      { 
         // 6.3 Call before function
         event('before.before', true, array($env, $route));
         
         call_if_exists('before', $route);
-
+        
         event('before.after', true, array($env, $route));
         
         // 6.4 Call matching controller function and output result
         event('render.before', true, array($env, $route));
         
         $output = call_user_func_array($route['callback'], array_values($route['params']));
-        if(is_null($output)) $output = call_if_exists('autorender', $route);
+        if (is_null($output)) { $output = call_if_exists('autorender', $route); }
         
         event('render.after', true, array($env, $route, &$output));
 
@@ -602,7 +599,7 @@ function run($env = null)
   }
 }
 
-/**
+/** 
 * Stop and exit limonade application
 * 
 * @access private 
@@ -613,33 +610,33 @@ function run($env = null)
 * 
 */
 function stop_and_exit($exit = true)
-{
+{ 
   call_if_exists('before_exit', $exit);
   $headers = headers_list();
-  if(request_is_head())
+  if (request_is_head())
   { 
      ob_end_clean();
   } 
   else 
   { 
     $flash_sweep = true;
-    foreach($headers as $header)
-    {
+    foreach ($headers as $header)
+    { 
       # If a Content-Type header exists, flash_sweep only if is text/html
       # Else if there's no Content-Type header, flash_sweep by default
-      if(stripos($header, 'Content-Type:') === 0)
-      {
+      if (stripos($header, 'Content-Type:') === 0)
+      { 
         $flash_sweep = stripos($header, 'Content-Type: text/html') === 0;
         break;
       }
     }
-    if($flash_sweep) flash_sweep();
+    if ($flash_sweep) flash_sweep();
   }
-  if(defined('SID')) session_write_close();
-  if($exit) exit;
+  if (defined('SID')) { session_write_close(); }
+  if ($exit) { exit; }
 }
 
-/**
+/** 
 * Returns limonade environment variables:
 * 
 * 'SERVER', 'FILES', 'REQUEST', 'SESSION', 'ENV', 'COOKIE', 
@@ -653,18 +650,18 @@ function stop_and_exit($exit = true)
 *
 */
 function env($reset = null)
-{
+{ 
   static $env = array();
-  if(func_num_args() > 0)
-  {
+  if (func_num_args() > 0)
+  { 
     $args = func_get_args();
-    if(is_null($args[0])) $env = array();
+    if (is_null($args[0])) { $env = array(); }
   }
-
-  if(empty($env))
-  {
-    if(empty($GLOBALS['_SERVER']))
-    {
+  
+  if (empty($env))
+  { 
+    if (empty($GLOBALS['_SERVER']))
+    { 
       # Fixing empty $GLOBALS['_SERVER'] bug 
       # http://sofadesign.lighthouseapp.com/projects/29612-limonade/tickets/29-env-is-empty
       $GLOBALS['_SERVER']  =& $_SERVER;
@@ -674,31 +671,31 @@ function env($reset = null)
       $GLOBALS['_ENV']     =& $_ENV;
       $GLOBALS['_COOKIE']  =& $_COOKIE;
     }
-
+    
     $glo_names = array('SERVER', 'FILES', 'REQUEST', 'SESSION', 'ENV', 'COOKIE');
-
+    
     $vars = array_merge($glo_names, request_methods());
-    foreach($vars as $var)
-    {
+    foreach ($vars as $var)
+    { 
       $varname = "_$var";
-      if(!array_key_exists($varname, $GLOBALS)) $GLOBALS[$varname] = array();
+      if (!array_key_exists($varname, $GLOBALS)) { $GLOBALS[$varname] = array(); }
       $env[$var] =& $GLOBALS[$varname];
     }
-
+    
     $method = request_method($env);
-    if($method == 'PUT' || $method == 'DELETE')
-    {
+    if ($method == 'PUT' || $method == 'DELETE')
+    { 
       $varname = "_$method";
-      if(array_key_exists('_method', $_POST) && $_POST['_method'] == $method)
-      {
-        foreach($_POST as $k => $v)
-        {
-          if($k == "_method") continue;
+      if (array_key_exists('_method', $_POST) && $_POST['_method'] == $method)
+      { 
+        foreach ($_POST as $k => $v)
+        { 
+          if ($k == "_method") { continue; }
           $GLOBALS[$varname][$k] = $v;
         }
       }
       else
-      {
+      { 
         parse_str(file_get_contents('php://input'), $GLOBALS[$varname]);
       }
     }
@@ -706,24 +703,24 @@ function env($reset = null)
   return $env;
 }
 
-/**
+/** 
 * Returns application root file path
 * 
 * @return string
 *
 */ 
 function app_file()
-{
+{ 
   static $file;
-  if(empty($file))
-  {
+  if (empty($file))
+  { 
     $debug_backtrace = debug_backtrace();
     $stacktrace = array_pop($debug_backtrace);
     $file = $stacktrace['file'];
   }
   return file_path($file);
 }
- 
+
 /**
  * Simplistic event handler.
  *
@@ -752,38 +749,36 @@ function app_file()
 function event($event = null, $callback = null, $args = array())
 { 
   static $events = array();
-  if ( is_null($event)) 
+  if (is_null($event)) { return $events; }
+  
+  if (is_array($event))
   { 
-    return $events;
-  }
-  if(is_array($event))
-  { 
-    foreach($event as $e => $callback)
+    foreach ($event as $e => $callback)
     { 
-      if(is_string($callback)) { event($e, $callback); }
+      if (is_string($callback)) { event($e, $callback); }
     }
     return;
   }
   
-  if(!isset($events[$event])) { $events[$event] = array(); }
+  if (! isset($events[$event])) { $events[$event] = array(); }
   
-  if(true === $callback)
+  if (true === $callback)
   { 
-    foreach($events[$event] as $callback => $_)
+    foreach ($events[$event] as $callback => $_)
     { 
-      if(function_exists($callback)) { call_user_func_array($callback, array_force($args)); }
+      if (function_exists($callback)) { call_user_func_array($callback, array_force($args)); }
     }
   }  
-  elseif(false === $callback)
+  elseif (false === $callback)
   { 
     $events[$event] = array();
   }
   else
   { 
-    foreach(array_force($callback) as $c)
+    foreach (array_force($callback) as $c)
     { 
       # add callback as array key to allow easier overrides.
-      if(is_string($c)) { $events[$event][$c] = null; }
+      if (is_string($c)) { $events[$event][$c] = null; }
     }
   }
 }
@@ -855,16 +850,13 @@ function event($event = null, $callback = null, $args = array())
 *
 */ 
 function error($errno = null, $function = null)
-{
+{ 
   static $errors = array();
-  if(func_num_args() > 0)
-  {
-    $errors[] = array('errno'=>$errno, 'function'=> $function);
-  }
+  if (func_num_args() > 0) { $errors[] = array('errno'=>$errno, 'function'=> $function); }
   return $errors;
 }
 
-/**
+/** 
 * Raise an error, passing a given error number and an optional message,
 * then exit.
 * 
@@ -882,13 +874,13 @@ function error($errno = null, $function = null)
 * 
 */
 function halt($errno = SERVER_ERROR, $msg = '', $debug_args = null)
-{
+{ 
   $args = func_get_args();
   $error = array_shift($args);
-
+  
   # switch $errno and $msg args
   // ### TODO cleanup / refactoring
-  if(is_string($errno))
+  if (is_string($errno))
   {
    $msg = $errno;
    $oldmsg = array_shift($args);
@@ -896,12 +888,12 @@ function halt($errno = SERVER_ERROR, $msg = '', $debug_args = null)
   }
   else
   { 
-    if(!empty($args)) { $msg = array_shift($args); }
+    if (! empty($args)) { $msg = array_shift($args); }
   }
 
-  if(empty($msg) && $errno == NOT_FOUND) $msg = request_uri();
-  if(empty($msg)) $msg = "";
-  if(!empty($args)) $debug_args = $args;
+  if (empty($msg) && $errno == NOT_FOUND) { $msg = request_uri(); }
+  if (empty($msg)) { $msg = ""; }
+  if (! empty($args)) { $debug_args = $args; }
   set('_lim_err_debug_args', $debug_args);
 
   error_handler_dispatcher($errno, $msg, null, null);
@@ -926,9 +918,9 @@ function halt($errno = SERVER_ERROR, $msg = '', $debug_args = null)
 function error_handler_dispatcher($errno, $errstr, $errfile, $errline)
 {
   $back_trace = debug_backtrace();
-  while($trace = array_shift($back_trace))
+  while ($trace = array_shift($back_trace))
   {
-    if($trace['function'] == 'halt')
+    if ($trace['function'] == 'halt')
     {
       $errfile = $trace['file'];
       $errline = $trace['line'];
@@ -937,7 +929,7 @@ function error_handler_dispatcher($errno, $errstr, $errfile, $errline)
   }  
 
   # Notices and warning won't halt execution
-  if(error_wont_halt_app($errno))
+  if (error_wont_halt_app($errno))
   {
     error_notice($errno, $errstr, $errfile, $errline);
     return;
@@ -953,12 +945,12 @@ function error_handler_dispatcher($errno, $errstr, $errfile, $errline)
     }
     
     $is_http_err = http_response_status_is_valid($errno);
-    while($handler = array_shift($handlers))
+    while ($handler = array_shift($handlers))
     {
       $e = is_array($handler['errno']) ? $handler['errno'] : array($handler['errno']);
-      while($ee = array_shift($e))
+      while ($ee = array_shift($e))
       {
-        if($ee == $errno || $ee == E_LIM_PHP || ($ee == E_LIM_HTTP && $is_http_err))
+        if ($ee == $errno || $ee == E_LIM_PHP || ($ee == E_LIM_HTTP && $is_http_err))
         {
           echo call_if_exists($handler['function'], $errno, $errstr, $errfile, $errline);
           exit;
@@ -1007,7 +999,7 @@ function error_default_handler($errno, $errstr, $errfile, $errline)
 */ 
 function error_not_found_output($errno, $errstr, $errfile, $errline)
 {
-  if(!function_exists('not_found'))
+  if (! function_exists('not_found'))
   {
     /**
     * Default not found error output
@@ -1045,7 +1037,7 @@ function error_not_found_output($errno, $errstr, $errfile, $errline)
 */ 
 function error_server_error_output($errno, $errstr, $errfile, $errline)
 {
-  if(!function_exists('server_error'))
+  if (! function_exists('server_error'))
   {
     /**
     * Default server error output
@@ -1082,7 +1074,7 @@ function error_server_error_output($errno, $errstr, $errfile, $errline)
 function error_layout($layout = false)
 {
   static $o_layout = 'default_layout.php';
-  if($layout !== false)
+  if ($layout !== false)
   {
     option('dir.views.errors', option('dir.views'));
     $o_layout = $layout;
@@ -1106,13 +1098,13 @@ function error_layout($layout = false)
 function error_notice($errno = false, $errstr = null, $errfile = null, $errline = null)
 {
   static $notices = array();
-  if($errno) 
+  if ($errno) 
   { 
     $notices[] = compact('errno', 'errstr', 'errfile', 'errline');
   }
   else 
   { 
-    if(is_null($errno)) { $notices = array(); }
+    if (is_null($errno)) { $notices = array(); }
   }
   return $notices;
 }
@@ -1125,7 +1117,7 @@ function error_notice($errno = false, $errstr = null, $errfile = null, $errline 
 */ 
 function error_notices_render()
 {
-  if(option('debug') && option('env') > ENV_PRODUCTION)
+  if (option('debug') && option('env') > ENV_PRODUCTION)
   {
     $notices = error_notice();
     error_notice(null); # reset notices
@@ -1224,13 +1216,13 @@ function error_http_status($errno)
 */
 function request_method($env = null)
 {
-  if(is_null($env)) $env = env();
+  if (is_null($env)) { $env = env(); }
   $m = array_key_exists('REQUEST_METHOD', $env['SERVER']) ? $env['SERVER']['REQUEST_METHOD'] : null;
-  if($m == "POST" && array_key_exists('_method', $env['POST'])) 
+  if ($m == "POST" && array_key_exists('_method', $env['POST'])) 
   { 
     $m = strtoupper($env['POST']['_method']);
   }
-  if(!in_array(strtoupper($m), request_methods()))
+  if (! in_array(strtoupper($m), request_methods()))
   {
     trigger_error("'$m' request method is unknown or unavailable.", E_USER_WARNING);
     $m = false;
@@ -1248,7 +1240,7 @@ function request_method($env = null)
 */
 function request_method_is_allowed($m = null)
 {
-  if(is_null($m)) $m = request_method();
+  if (is_null($m)) { $m = request_method(); }
   return in_array(strtoupper($m), request_methods());
 }
 
@@ -1356,17 +1348,17 @@ function request_methods()
 function request_uri($env = null)
 {
   static $uri = null;
-  if(is_null($env))
+  if (is_null($env))
   {
-    if(!is_null($uri)) return $uri;
+    if (! is_null($uri)) { return $uri; }
     $env = env();
   }
 
-  if(array_key_exists('uri', $env['GET']))
+  if (array_key_exists('uri', $env['GET']))
   {
     $uri = $env['GET']['uri'];
   }
-  else if(array_key_exists('u', $env['GET']))
+  elseif (array_key_exists('u', $env['GET']))
   {
     $uri = $env['GET']['u'];
   }
@@ -1385,15 +1377,15 @@ function request_uri($env = null)
     # Note: some servers seem to have trouble with getenv() so we'll test it two ways
     if (trim($path_info, '/') != '' && $path_info != "/".$app_file)
     {
-      if(strpos($path_info, '&') !== 0)
+      if (strpos($path_info, '&') !== 0)
       {
         # exclude GET params
         $params = explode('&', $path_info);
         $path_info = array_shift($params);
         # populate $_GET
-        foreach($params as $param)
+        foreach ($params as $param)
         {
-          if(strpos($param, '=') > 0)
+          if (strpos($param, '=') > 0)
           {
             list($k, $v) = explode('=', $param);
             $env['GET'][$k] = $v;
@@ -1407,30 +1399,30 @@ function request_uri($env = null)
     {
       $uri = $query_string;
       $get = $env['GET'];
-      if(count($get) > 0)
+      if (count($get) > 0)
       {
         # exclude GET params
         $keys  = array_keys($get);
         $first = array_shift($keys);
-        if(strpos($query_string, $first) === 0) $uri = $first;
+        if (strpos($query_string, $first) === 0) { $uri = $first; }
       }
     }
-    elseif(array_key_exists('REQUEST_URI', $env['SERVER']) && !empty($env['SERVER']['REQUEST_URI']))
+    elseif (array_key_exists('REQUEST_URI', $env['SERVER']) && !empty($env['SERVER']['REQUEST_URI']))
     {
       $request_uri = rtrim(rawurldecode($env['SERVER']['REQUEST_URI']), '?/').'/';
       $base_path = $env['SERVER']['SCRIPT_NAME'];
 
-      if($request_uri."index.php" == $base_path) $request_uri .= "index.php";
+      if ($request_uri."index.php" == $base_path) { $request_uri .= "index.php"; }
       $uri = str_replace($base_path, '', $request_uri);
     }
-    elseif($env['SERVER']['argc'] > 1 && trim($env['SERVER']['argv'][1], '/') != '')
+    elseif ($env['SERVER']['argc'] > 1 && trim($env['SERVER']['argv'][1], '/') != '')
     {
       $uri = $env['SERVER']['argv'][1];
     }
   }
 
   $uri = rtrim($uri, "/"); # removes ending /
-  if(empty($uri))
+  if (empty($uri))
   {
     $uri = '/';
   }
@@ -1545,11 +1537,17 @@ function route()
 {
   static $routes = array();
   $nargs = func_num_args();
-  if( $nargs > 0)
+  if ($nargs > 0)
   {
     $args = func_get_args();
-    if($nargs === 1 && is_null($args[0])) $routes = array();
-    else if($nargs < 3) trigger_error("Missing arguments for route()", E_USER_ERROR);
+    if ($nargs === 1 && is_null($args[0]))
+    { 
+      $routes = array();
+    }
+    elseif ($nargs < 3) 
+    { 
+      trigger_error("Missing arguments for route()", E_USER_ERROR);
+    }
     else
     {
       $method        = $args[0];
@@ -1601,12 +1599,12 @@ function route_reset()
 function route_build($method, $path_or_array, $callback, $options = array())
 {
   $method = strtoupper($method);
-  if(!in_array($method, request_methods())) 
+  if (! in_array($method, request_methods())) 
   { 
     trigger_error("'$method' request method is unknown or unavailable.", E_USER_WARNING);
   }
 
-  if(is_array($path_or_array))
+  if (is_array($path_or_array))
   {
     $path  = array_shift($path_or_array);
     $names = $path_or_array[0];
@@ -1622,9 +1620,9 @@ function route_build($method, $path_or_array, $callback, $options = array())
   $optional_slash_subpattern   = "(?:/*?)";
   $no_slash_asterisk_subpattern = "(?:([^\/]*))?";
 
-  if($path[0] == "^")
+  if ($path[0] == "^")
   {
-    if($path{strlen($path) - 1} != "$") $path .= "$";
+    if ($path{strlen($path) - 1} != "$") { $path .= "$"; }
      $pattern = "#".$path."#i";
   }
   else if(empty($path) || $path == "/")
@@ -1638,32 +1636,37 @@ function route_build($method, $path_or_array, $callback, $options = array())
 
     $parameters_count = 0;
 
-    foreach($elts as $elt)
+    foreach ($elts as $elt)
     {
-      if(empty($elt)) continue;
+      if (empty($elt)) { continue; }
       $name = null; 
       # extracting double asterisk **
-      if($elt == "**"):
+      if ($elt == "**")
+      { 
         $parsed[] = $double_asterisk_subpattern;
         $name = $parameters_count;
-
+      }
       # extracting single asterisk *
-      elseif($elt == "*"):
+      elseif ($elt == "*")
+      { 
         $parsed[] = $single_asterisk_subpattern;
         $name = $parameters_count;
-
+      }
       # extracting named parameters :my_param 
-      elseif($elt[0] == ":"):
-        if(preg_match('/^:([^\:]+)$/', $elt, $matches))
+      elseif ($elt[0] == ":")
+      { 
+        if (preg_match('/^:([^\:]+)$/', $elt, $matches))
         {
           $parsed[] = $single_asterisk_subpattern;
           $name = $matches[1];
         };
 
-      elseif(strpos($elt, '*') !== false):
+      }
+      elseif (strpos($elt, '*') !== false)
+      { 
         $sub_elts = explode('*', $elt);
         $parsed_sub = array();
-        foreach($sub_elts as $sub_elt)
+        foreach ($sub_elts as $sub_elt)
         {
           $parsed_sub[] = preg_quote($sub_elt, "#");
           $name = $parameters_count;
@@ -1671,15 +1674,18 @@ function route_build($method, $path_or_array, $callback, $options = array())
         # 
         $parsed[] = "/".implode($no_slash_asterisk_subpattern, $parsed_sub);
 
-      else:
+      }
+      else
+      { 
         $parsed[] = "/".preg_quote($elt, "#");
-
-      endif;
+      }
 
       # set parameters names 
-      if(is_null($name)) continue;
-      if(!array_key_exists($parameters_count, $names) || is_null($names[$parameters_count]))
+      if (is_null($name)) { continue; }
+      if (! array_key_exists($parameters_count, $names) || is_null($names[$parameters_count]))
+      { 
         $names[$parameters_count] = $name;
+      }
       $parameters_count++;
     }
 
@@ -1717,19 +1723,19 @@ function route_find($method, $path)
 {
   $routes = route();
   $method = strtoupper($method);
-  foreach($routes as $route)
+  foreach ($routes as $route)
   {
-    if($method == $route["method"] && preg_match($route["pattern"], $path, $matches))
+    if ($method == $route["method"] && preg_match($route["pattern"], $path, $matches))
     {
       $options = $route["options"];
       $params = array_key_exists('params', $options) ? $options["params"] : array();
-      if(count($matches) > 1)
+      if (count($matches) > 1)
       {
         array_shift($matches);
         $n_matches = count($matches);
         $names     = array_values($route["names"]);
         $n_names   = count($names);
-        if( $n_matches < $n_names )
+        if ( $n_matches < $n_names )
         {
           $a = array_fill(0, $n_names - $n_matches, null);
           $matches = array_merge($matches, $a);
@@ -1784,7 +1790,7 @@ function render($content_or_func, $layout = '', $locals = array())
       file_path(option('tmp.dir.views'), $content_or_func . $ext) :
       file_path(option('dir.views'), $content_or_func . $ext);
     
-  if(function_exists('before_render'))
+  if (function_exists('before_render'))
   { 
     list($content_or_func, $layout, $locals, $view_path) = before_render($content_or_func, $layout, $locals, $view_path);    
   }
@@ -1792,18 +1798,24 @@ function render($content_or_func, $layout = '', $locals = array())
   $vars = array_merge(set(), $locals);
 
   $flash = flash_now();
-  if(array_key_exists('flash', $vars)) trigger_error('A $flash variable is already passed to view. Flash messages will only be accessible through flash_now()', E_USER_NOTICE);  
-  else if(!empty($flash)) $vars['flash'] = $flash;
+  if (array_key_exists('flash', $vars))
+  { 
+    trigger_error('A $flash variable is already passed to view. Flash messages will only be accessible through flash_now()', E_USER_NOTICE);
+  }
+  else
+  { 
+    if (! empty($flash)) { $vars['flash'] = $flash; }
+  }
 
   $infinite_loop = false;
 
   # Avoid infinite loop: this function is in the backtrace ?
-  if(function_exists($content_or_func))
+  if (function_exists($content_or_func))
   {
     $back_trace = debug_backtrace();
-    while($trace = array_shift($back_trace))
+    while ($trace = array_shift($back_trace))
     {
-      if($trace['function'] == strtolower($content_or_func))
+      if ($trace['function'] == strtolower($content_or_func))
       {
         $infinite_loop = true;
         break;
@@ -1811,13 +1823,13 @@ function render($content_or_func, $layout = '', $locals = array())
     }
   }
 
-  if(function_exists($content_or_func) && !$infinite_loop)
+  if (function_exists($content_or_func) && !$infinite_loop)
   {
     ob_start();
     call_user_func($content_or_func, $vars);
     $content = ob_get_clean();
   }
-  elseif(file_exists($view_path))
+  elseif (file_exists($view_path))
   {
     ob_start();
     extract($vars);
@@ -1826,11 +1838,17 @@ function render($content_or_func, $layout = '', $locals = array())
   }
   else
   {
-    if(substr_count($content_or_func, '%') !== count($vars)) $content = $content_or_func;
-    else $content = vsprintf($content_or_func, $vars);
+    if (substr_count($content_or_func, '%') !== count($vars))
+    { 
+      $content = $content_or_func;
+    }
+    else
+    { 
+      $content = vsprintf($content_or_func, $vars);
+    }
   }
 
-  if(empty($layout)) return $content;
+  if (empty($layout)) { return $content; }
 
   return render($layout, null, array('content' => $content));
 }
@@ -1859,11 +1877,11 @@ function partial($content_or_func, $locals = array())
     # extract the core parts 
     $tmp_arr = pathinfo($content_or_func);
     # get the format from the last part if set, else default to HTML
-    $format = ( isset($tmp_arr['extension'])) ? $tmp_arr['extension'] : 'html';
+    $format = (isset($tmp_arr['extension'])) ? $tmp_arr['extension'] : 'html';
     # 
-    $tmpl_name = ( isset($tmp_arr['extension'])) ? str_replace('.' . $format,'', $tmp_arr['basename']) : $tmp_arr['basename'];
+    $tmpl_name = (isset($tmp_arr['extension'])) ? str_replace('.' . $format,'', $tmp_arr['basename']) : $tmp_arr['basename'];
     # 
-    $tmpl_full_name = ( $tmp_arr['dirname'] == '.') ? "$tmpl_name.$format.php" : $tmp_arr['dirname'] ."/$tmpl_name.$format.php";
+    $tmpl_full_name = ($tmp_arr['dirname'] == '.') ? "$tmpl_name.$format.php" : $tmp_arr['dirname'] ."/$tmpl_name.$format.php";
     
     foreach ($collection as $$tmpl_name)
     { 
@@ -1902,7 +1920,7 @@ function html($content_or_func, $layout = '', $locals = array())
 function layout($function_or_file = null)
 {
   static $layout = null;
-  if(func_num_args() > 0) $layout = $function_or_file;
+  if (func_num_args() > 0) { $layout = $function_or_file; }
   return $layout;
 }
 
@@ -2010,15 +2028,18 @@ function render_file($filename, $return = false)
   #   
   # }
   $filename = str_replace('../', '', $filename);
-  if(file_exists($filename))
+  if (file_exists($filename))
   {
     $content_type = mime_type(file_extension($filename));
     $header = 'Content-type: '.$content_type;
-    if(file_is_text($filename)) $header .= '; charset='.strtolower(option('encoding'));
+    if (file_is_text($filename)) { $header .= '; charset='.strtolower(option('encoding')); }
     send_header($header);
     return file_read($filename, $return);
   }
-  else halt(NOT_FOUND, "unknown filename $filename");
+  else 
+  { 
+    halt(NOT_FOUND, "unknown filename $filename");
+  }
 }
 
 /**
@@ -2030,7 +2051,7 @@ function render_file($filename, $return = false)
 */
 function send_header($header = null, $replace = true, $code = false)
 {
-  if(!headers_sent()) 
+  if (! headers_sent()) 
   { 
     call_if_exists('before_sending_header', $header);
     header($header, $replace, $code);
@@ -2060,49 +2081,48 @@ function url_for($params = null)
   $paths  = array();
   $params = func_get_args();
   $GET_params = array();
-  foreach($params as $param)
+  foreach ($params as $param)
   {
-    if(is_array($param))
+    if (is_array($param))
     {
       $GET_params = array_merge($GET_params, $param);
       continue;
     }
-    if(filter_var_url($param))
+    if (filter_var_url($param))
     {
       $paths[] = $param;
       continue;
     }
     $p = explode('/',$param);
-    foreach($p as $v)
+    foreach ($p as $v)
     {
-      if($v != "") $paths[] = str_replace('%23', '#', rawurlencode($v));
+      if ($v != "") { $paths[] = str_replace('%23', '#', rawurlencode($v)); }
     }
   }
 
   $path = rtrim(implode('/', $paths), '/');
   
-  if(!filter_var_url($path)) 
+  if (! filter_var_url($path)) 
   {
     # it's a relative URL or an URL without a schema
     $base_uri = option('base.uri');
     $path = file_path($base_uri, $path);
   }
   
-  if(!empty($GET_params))
+  if (! empty($GET_params))
   {
     $is_first_qs_param = true;
-    $path_as_no_question_mark = strpos($path, '?') === false;
+    $path_as_no_question_mark = (strpos($path, '?') === false);
       
-    foreach($GET_params as $k => $v)
+    foreach ($GET_params as $k => $v)
     {
-      $qs_separator = $is_first_qs_param && $path_as_no_question_mark ? 
-                        '?' : '&amp;'; 
+      $qs_separator = $is_first_qs_param && $path_as_no_question_mark ? '?' : '&amp;'; 
       $path .= $qs_separator . rawurlencode($k) . '=' . rawurlencode($v);
       $is_first_qs_param = false;
     }
   }
   
-  if(DIRECTORY_SEPARATOR != '/') $path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
+  if (DIRECTORY_SEPARATOR != '/') { $path = str_replace(DIRECTORY_SEPARATOR, '/', $path); }
 
   return $path;
 }
@@ -2120,7 +2140,7 @@ function url_for($params = null)
 */
 function h($str, $quote_style = ENT_NOQUOTES, $charset = null)
 {
-  if(is_null($charset)) $charset = strtoupper(option('encoding'));
+  if (is_null($charset)) { $charset = strtoupper(option('encoding')); }
   return htmlspecialchars($str, $quote_style, $charset); 
 }
 
@@ -2140,18 +2160,14 @@ function h($str, $quote_style = ENT_NOQUOTES, $charset = null)
 */
 function flash($name = null, $value = null)
 {
-  if(!defined('SID')) trigger_error("Flash messages can't be used because session isn't enabled", E_USER_WARNING);
+  if (! defined('SID')) trigger_error("Flash messages can't be used because session isn't enabled", E_USER_WARNING);
   static $messages = array();
   $args = func_get_args();
   $name = array_shift($args);
-  if(is_null($name)) return $messages;
-  if(is_array($name)) return $messages = array_merge($messages, $name);
-  if(!empty($args))
-  {
-    $messages[$name] = count($args) > 1 ? $args : $args[0];
-  }
-  if(!array_key_exists($name, $messages)) return null;
-  else return $messages[$name];
+  if (is_null($name))  { return $messages; }
+  if (is_array($name)) { return $messages = array_merge($messages, $name); }
+  if (! empty($args))   { $messages[$name] = count($args) > 1 ? $args : $args[0]; }
+  return (! array_key_exists($name, $messages)) ? null : $messages[$name];
   return $messages;
 }
 
@@ -2175,22 +2191,18 @@ function flash($name = null, $value = null)
 function flash_now($name = null, $value = null)
 {
   static $messages = null;
-  if(is_null($messages))
+  if (is_null($messages))
   {
     $fkey = LIM_SESSION_FLASH_KEY;
     $messages = array();
-    if(defined('SID') && array_key_exists($fkey, $_SESSION)) $messages = $_SESSION[$fkey];
+    if (defined('SID') && array_key_exists($fkey, $_SESSION)) { $messages = $_SESSION[$fkey]; }
   }
   $args = func_get_args();
   $name = array_shift($args);
-  if(is_null($name)) return $messages;
-  if(is_array($name)) return $messages = array_merge($messages, $name);
-  if(!empty($args))
-  {
-    $messages[$name] = count($args) > 1 ? $args : $args[0];
-  }
-  if(!array_key_exists($name, $messages)) return null;
-  else return $messages[$name];
+  if (is_null($name))  { return $messages; }
+  if (is_array($name)) { return $messages = array_merge($messages, $name); }
+  if (! empty($args))  { $messages[$name] = count($args) > 1 ? $args : $args[0]; }
+  return (!array_key_exists($name, $messages)) ? null : $messages[$name];
   return $messages;
 }
 
@@ -2207,7 +2219,7 @@ function flash_now($name = null, $value = null)
 */
 function flash_sweep()
 {
-  if(defined('SID'))
+  if (defined('SID'))
   {
     $fkey = LIM_SESSION_FLASH_KEY;
     $_SESSION[$fkey] = flash();
@@ -2232,17 +2244,17 @@ function flash_sweep()
 function content_for($name = null, $content = null)
 {
   static $_name = null;
-  if(is_null($name) && !is_null($_name))
+  if (is_null($name) && !is_null($_name))
   {
     set($_name, ob_get_clean());
     $_name = null;	
   }
-  elseif(!is_null($name) && !isset($content))
+  elseif (! is_null($name) && !isset($content))
   {
     $_name = $name;	
     ob_start();
   }
-  elseif(isset($name, $content))
+  elseif (isset($name, $content))
   {
     set($name, $content);
   }
@@ -2274,7 +2286,7 @@ function end_content_for()
 function benchmark()
 {
   $res = array( 'execution_time' => (microtime() - LIM_START_MICROTIME) );
-  if(defined('LIM_START_MEMORY'))
+  if (defined('LIM_START_MEMORY'))
   { 
     $current_mem_usage     = memory_get_usage();
     $res['current_memory'] = $current_mem_usage;
@@ -2308,7 +2320,7 @@ function call_if_exists($callback)
 {
   $args = func_get_args();
   $callback = array_shift($args);
-  if(is_callable($callback)) return call_user_func_array($callback, $args);
+  if (is_callable($callback)) { return call_user_func_array($callback, $args); }
   return;
 }
 
@@ -2322,7 +2334,7 @@ function call_if_exists($callback)
 */
 function define_unless_exists($name, $value)
 {
-  if(!defined($name)) define($name, $value);
+  if (! defined($name)) { define($name, $value); }
 }
 
 /**
@@ -2363,12 +2375,12 @@ function v($value, $default)
 */
 function require_once_dir($path, $pattern = "*.php", $prevents_output = true)
 {
-  if($path[strlen($path) - 1] != "/") $path .= "/";
+  if ($path[strlen($path) - 1] != "/") { $path .= "/"; }
   $filenames = glob($path.$pattern);
-  if(!is_array($filenames)) $filenames = array();
-  if($prevents_output) ob_start();
-  foreach($filenames as $filename) require_once $filename;
-  if($prevents_output) ob_end_clean();
+  if (! is_array($filenames)) { $filenames = array(); }
+  if ($prevents_output) { ob_start(); }
+  foreach ($filenames as $filename) { require_once $filename; }
+  if ($prevents_output) { ob_end_clean(); }
   return $filenames;
 }
 
@@ -2382,7 +2394,7 @@ function require_once_dir($path, $pattern = "*.php", $prevents_output = true)
 */
 function debug($var, $output_as_html = true)
 { 
-  if ( is_null($var) ) { return '<span class="null-value">[NULL]</span>'; };
+  if (is_null($var)) { return '<span class="null-value">[NULL]</span>'; };
   $out = '';
   switch ($var) 
   { 
@@ -2406,7 +2418,7 @@ function debug($var, $output_as_html = true)
       $out = var_export($var, true);
       break;
   }
-  if ($output_as_html) { $out = "<pre><code>" . h($out) ."</code></pre>"; }
+  if ($output_as_html) { $out = "<pre>\n" . h($out) ."</pre>"; }
   return $out;
 }
 
@@ -2421,7 +2433,7 @@ function debug($var, $output_as_html = true)
 
 function debug_settings()
 { 
-  if ( option('debug.settings') ) 
+  if (option('debug.settings')) 
   { 
     option('tmp.dir.views', option('limonade.dir.views'));
     $o = render('_settings.html.php', null);
@@ -2521,7 +2533,7 @@ define( 'HTTP_NOT_EXTENDED',                  510 );
 */
 function status($code = 500)
 {
-  if(!headers_sent())
+  if (! headers_sent())
   {
     $str = http_response_status_code($code);
     send_header($str);
@@ -2557,17 +2569,17 @@ function redirect_to($params)
   # one yourself.
 
   // ### TODO make absolute uri
-  if(!headers_sent())
+  if (! headers_sent())
   {
     $status = HTTP_MOVED_TEMPORARILY; # default for a redirection in PHP
     $params = func_get_args();
     $n_params = array();
     # extract status param if exists
-    foreach($params as $param)
+    foreach ($params as $param)
     {
-      if(is_array($param))
+      if (is_array($param))
       {
-        if(array_key_exists('status', $param))
+        if (array_key_exists('status', $param))
         {
           $status = $param['status'];
           unset($param['status']);
@@ -2667,7 +2679,7 @@ function http_response_status($num = null)
       507 => 'Insufficient Storage',
       510 => 'Not Extended'
   );
-  if(is_null($num)) return $status;
+  if (is_null($num)) { return $status; }
   return array_key_exists($num, $status) ? $status[$num] : '';
 }
 
@@ -2694,7 +2706,7 @@ function http_response_status_is_valid($num)
 function http_response_status_code($num)
 {
   $protocole = empty($_SERVER["SERVER_PROTOCOL"]) ? "HTTP/1.1" : $_SERVER["SERVER_PROTOCOL"];
-  if($str = http_response_status($num)) return "$protocole $num $str";
+  if ($str = http_response_status($num)) { return "$protocole $num $str"; }
 }
 
 /**
@@ -2712,18 +2724,18 @@ function http_response_status_code($num)
 */
 function http_ua_accepts($type, $env = null)
 {
-  if(is_null($env)) $env = env();
+  if (is_null($env)) { $env = env(); }
   $accept = array_key_exists('HTTP_ACCEPT', $env['SERVER']) ? $env['SERVER']['HTTP_ACCEPT'] : null;
   
-  if(!$accept || $accept === '*/*') return true;
+  if (! $accept || $accept === '*/*') { return true; }
   
-  if($type)
+  if ($type)
   {
     # Allow "html" vs "text/html" etc
-    if(!strpos($type, '/')) $type = mime_type($type);
+    if (! strpos($type, '/')) { $type = mime_type($type); }
     
     # Check if we have a direct match
-    if(strpos($accept, $type) > -1) return true;
+    if (strpos($accept, $type) > -1) { return true; }
     
     # Check if we have type/*  
     $type_parts = explode('/', $type); 
@@ -2923,12 +2935,15 @@ function mime_type($ext = null)
 function file_mime_content_type($filename)
 {
   $ext = file_extension($filename); # strtolower isn't necessary 
-  if($mime = mime_type($ext)) return $mime;
+  if ($mime = mime_type($ext)) 
+  { 
+    return $mime;
+  }
   elseif (function_exists('finfo_open'))
   {
-    if($finfo = finfo_open(FILEINFO_MIME))
+    if ($finfo = finfo_open(FILEINFO_MIME))
     {
-      if($mime = finfo_file($finfo, $filename))
+      if ($mime = finfo_file($finfo, $filename))
       {
         finfo_close($finfo);
         return $mime;        
@@ -2957,21 +2972,22 @@ function file_read_chunked($filename, $retbytes = true)
   $buffer    = '';
   $cnt       = 0;
   $handle    = fopen($filename, 'rb');
-  if ($handle === false) return false;
+  if ($handle === false) { return false; }
 
   ob_start();
-  while (!feof($handle)) {
+  while (! feof($handle))
+  { 
     $buffer = fread($handle, $chunksize);
     echo $buffer;
     ob_flush();
     flush();
-    if ($retbytes) $cnt += strlen($buffer);
+    if ($retbytes) { $cnt += strlen($buffer); }
     set_time_limit(0);
   }
   ob_end_flush();
 
   $status = fclose($handle);
-  if ($retbytes && $status) return $cnt; # return num. bytes delivered like readfile() does.
+  if ($retbytes && $status) { return $cnt; }# return num. bytes delivered like readfile() does.
   return $status;
 }
 
@@ -2990,7 +3006,7 @@ function file_path($path)
   $ds = '/'; 
   $win_ds = '\\';
   $n_path = count($args) > 1 ? implode($ds, $args) : $path;
-  if(strpos($n_path, $win_ds) !== false) $n_path = str_replace( $win_ds, $ds, $n_path );
+  if (strpos($n_path, $win_ds) !== false) { $n_path = str_replace( $win_ds, $ds, $n_path ); }
   $n_path = preg_replace( "#$ds+#", $ds, $n_path);
   return $n_path;
 }
@@ -3005,7 +3021,7 @@ function file_path($path)
 function file_extension($filename)
 {
   $pos = strrpos($filename, '.');
-  if($pos !== false) return substr($filename, $pos + 1);
+  if ($pos !== false) { return substr($filename, $pos + 1); }
   return false;
 }
 
@@ -3018,7 +3034,7 @@ function file_extension($filename)
 */
 function file_is_text($filename)
 {
-  if($mime = file_mime_content_type($filename)) return substr($mime,0,5) == "text/";
+  if ($mime = file_mime_content_type($filename)) { return substr($mime,0,5) == "text/"; }
   return null;
 }
 
@@ -3044,8 +3060,8 @@ function file_is_binary($filename)
 */
 function file_read($filename, $return = false)
 {
-  if(!file_exists($filename)) trigger_error("$filename doesn't exists", E_USER_ERROR);
-  if($return) return file_get_contents($filename);
+  if (! file_exists($filename)) { trigger_error("$filename doesn't exists", E_USER_ERROR); }
+  if ($return) { return file_get_contents($filename); }
   return file_read_chunked($filename);
 }
 
@@ -3063,7 +3079,7 @@ function file_list_dir($dir)
   {
     while (false !== ($file = readdir($handle)))
     {
-      if ($file[0] != "." && $file != "..") $files[] = $file;
+      if ($file[0] != "." && $file != "..") { $files[] = $file; }
     }
     closedir($handle);
   }
@@ -3108,9 +3124,9 @@ if(!function_exists('array_replace'))
 
     for ($i = 0; $i < $count; ++$i)
     {
-      if(is_array($args[$i]))
+      if (is_array($args[$i]))
       {
-        foreach ($args[$i] as $key => $val) $array[$key] = $val;
+        foreach ($args[$i] as $key => $val) { $array[$key] = $val; }
       }
       else
       {
@@ -3154,7 +3170,7 @@ function filter_var_url($str)
 function limonade_htmlspecialchars_decode($string, $quote_style = ENT_COMPAT)
 {
   $table = array_flip(get_html_translation_table(HTML_SPECIALCHARS, $quote_style));
-  if($quote_style === ENT_QUOTES) { $table['&#039;'] = $table['&#39;'] = '\''; }
+  if ($quote_style === ENT_QUOTES) { $table['&#039;'] = $table['&#39;'] = '\''; }
   return strtr($string, $table);
 }
 
@@ -3173,7 +3189,7 @@ if(!function_exists('htmlspecialchars_decode'))
 */ 
 function fallbacks_for_not_implemented_functions()
 {
-  if(!function_exists('json_encode'))
+  if (! function_exists('json_encode'))
   {
     # for PHP 5 < PHP 5.2.0
     function json_encode()
@@ -3212,7 +3228,7 @@ function load_core()
   { 
     if (in_array($core, $_cores)) { continue; }
     $core_file = APP_DIR_ROOT . "/lib/core/$core.core.php";
-    if ( ! file_exists($core_file)) 
+    if (! file_exists($core_file)) 
     {  
       halt(SERVER_ERROR, __FUNCTION__."(): Requested Core file [ $core_file ] was not found!");
     }
@@ -3251,7 +3267,7 @@ function load_helper()
   { 
     if (in_array($helper, $_helpers)) { continue; }
     $helper_file = APP_DIR_ROOT . "/lib/helpers/$helper.helper.php";
-    if ( ! file_exists($helper_file)) 
+    if (! file_exists($helper_file)) 
     { 
       halt(SERVER_ERROR, __FUNCTION__ . "(): Requested Helper file [$helper_file] was not found!"); 
     }
@@ -3293,7 +3309,7 @@ function load_lext()
     # if directory with lext name exists, look for lext file within it, else default path
     $lext_file = is_dir("$lexts_dir/$lext") ? "$lexts_dir/$lext/$lext.lext.php" : "$lexts_dir/$lext.lext.php";
     # bail out or load it
-    if ( ! file_exists($lext_file)) 
+    if (! file_exists($lext_file)) 
     { 
       halt(SERVER_ERROR, __FUNCTION__ . "(): Requested Lext file [$lext_file] was not found!"); 
     }
@@ -3333,7 +3349,7 @@ function load_config()
   { 
     if (in_array($conf, $_configs)) { continue; }
     $conf_file = APP_DIR_ROOT . "/conf/$conf.conf.php";
-    if ( ! file_exists($conf_file)) 
+    if (! file_exists($conf_file)) 
     { 
       halt(SERVER_ERROR, "Requested Configuration file '$conf_file' was not found!"); 
     }
