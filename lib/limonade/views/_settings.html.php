@@ -368,13 +368,14 @@
   #settings.wrap *{margin:0;padding:0;border:0;outline:0;}
   #settings.wrap { width:960px; background:#FFF;margin:2em auto;padding:30px 20px 20px 20px; border:1px solid #ccc; font-family:'Lucida Grande','Lucida Sans Unicode','Garuda'; }
   #settings.wrap div.clear{clear:both;}
-  #settings.wrap pre { margin:0em 0; white-space:pre; }
-  #settings.wrap pre, code, tt { font:12px Monaco, 'Andale Mono', 'Lucida Console', monospace;line-height:16px;}
+  #settings.wrap pre { margin:0em 0; white-space:pre; overflow: auto; width: 700px; }
+  #settings.wrap pre, code, tt { font:12px Menlo, Monaco, 'Andale Mono', 'Lucida Console', monospace;line-height:16px;}
   #settings.wrap li{height:18px;}
   #settings.wrap ul{list-style:none;margin:0;padding:0;}
   #settings.wrap ol:hover{cursor:pointer;}
   #settings.wrap ol li{white-space:pre;}
   #settings.wrap #explanation{font-size:12px;color:#666;margin:20px 0 0 0; text-align:center;}
+  #settings.wrap #explanation code {background-color: #efefef; padding: 3px; color:#981919;}
   #settings.wrap h2{margin:0;font-size:16px;color:#981919;text-align:center;padding-bottom:10px;border-bottom:1px solid #ccc;}
   #settings.wrap h2 span {color:#ccc; }
   #settings.wrap h3{ float:left;width:213px;margin: 30px 0 10px 0;color:#981919;font-size:14px;font-weight:bold;}
@@ -408,8 +409,9 @@
   /* HIDE PRE/POST CODE AT START */
   #settings.wrap .pre-context,
   #settings.wrap .post-context{display:none;}
-  #settings.wrap table td.code { width:740px }
-  #settings.wrap table td.code div{overflow:hidden}
+  #settings.wrap table td.code { width:740px; overflow: hidden }
+/*  #settings.wrap table td.code div{overflow:hidden}*/
+  #settings.wrap table td.code div{overflow: auto}
   #settings.wrap table td.code div span.null-value { color: #ccc;}
   #settings.wrap table td.code div pre { margin: 0; font-size: 100%; }
 </style>
