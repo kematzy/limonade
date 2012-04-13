@@ -457,6 +457,7 @@ function run($env = null)
   
   # 
   option('debug',                 false);
+  option('debug.enabled',         false);
   # enable configuration settings output. Default: false
   option('debug.settings',        false);
   
@@ -467,6 +468,11 @@ function run($env = null)
   option('x-sendfile',            0); # 0: disabled, 
                                      # X-SENDFILE: for Apache and Lighttpd v. >= 1.5,
                                      # X-LIGHTTPD-SEND-FILE: for Apache and Lighttpd v. < 1.5
+  
+  # give Limonade some credit
+  option('limonade.credit.text', 'Limonade');
+  option('limonade.credit.a.href', 'http://www.limonade-php.net/');
+  option('limonade.credit.a.title', 'learn more about this great PHP framework');
   
 
   // 1. Set handlers
@@ -3368,6 +3374,16 @@ function load_config()
 function in_development_mode() { return ( option('env') === ENV_DEVELOPMENT ); }
 function in_production_mode()  { return ( option('env') === ENV_PRODUCTION ); }
 
+
+/**
+* Return a standardised Limonade credit string
+* 
+* @return (void) 
+*/
+function limonade_credit()
+{ 
+  return "powered by <a href=\"". option('limonade.credit.a.href'). "\" rel=\"external\" title=\"". option('limonade.credit.a.title'). "\">". option('limonade.credit.text'). "</a>";
+}
 
 #/EOF
 ?>
