@@ -3454,6 +3454,60 @@ function load_config()
 
 
 /**
+* Logs messages to log files.
+* 
+* Depends on `option('log.enabled')` being `TRUE` or 
+* `option('log.error')`` being `TRUE`.
+* 
+* <b>Params</b>
+* 
+* @param (string) `$type`     - the type of message: (error|debug|info|???)
+* 
+* @param (string) `$msg`      - the message to write
+* 
+* @param (string) `$prefix`   - the log message prefix to use. Default: '' [empty string]
+* 
+* @return (void) 
+* 
+* <b>Examples</b>
+* 
+*     log_msg('error',"something went wrong");
+*     
+*     log_msg('debug',"just a low level debug message");
+* 
+* @api public
+*/
+function log_msg($type, $msg, $prefix='', $file = null, $line = null)
+{ 
+  $type = (empty($type)) ? "error" : $type; 
+  $log_toggle = "log.$type";
+  if (option('log.enabled') or (option($log_toggle) !== false) )
+  { 
+    if (! is_null($file) || !is_null($line)) { $lines = "in file=[$file] on line=[$line]"; }else{ $lines = ''; }
+    $msg = "$msg $lines\n";
+    
+    # set the file name  & path [/path/2/log/YYYY-MM-DD-??type??.log]
+    $output_file =  option('log.path') .  date( 'Y-m-d' ) . '-'. $type . '.log';
+    # check if the error log file exists, else create it and open it for writing in the end of the file
+    if (! is_file($output_file))
+    { 
+      # no, the output file does not exist, so let's create it
+      if (in_development_mode()) 
+      { 
+        fopen($output_file, 'a') or halt(500, "File System Access Error :: Unable to create new $type log file [$output_file]");
+      }
+      else
+      { 
+        halt(500, "Server Error");
+      }
+    }
+    # add message into output file
+    error_log($msg, 3, $output_file); 
+  }
+}
+
+
+/**
 * Checks the env value and returns boolean (TRUE/FALSE) depending 
 * on the current active environment.
 * 
