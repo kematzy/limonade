@@ -1837,7 +1837,9 @@ function render($content_or_func, $layout = '', $locals = array())
   $view_path = option_isset('tmp.dir.views') ? 
       file_path(option('tmp.dir.views'), $content_or_func . $ext) :
       file_path(option('dir.views'), $content_or_func . $ext);
-    
+  # reset the temporary views directory for the next run
+  option('tmp.dir.views', null); # reset
+  # echo debug( array('content_or_func' => $content_or_func, 'view_path'=>$view_path, 'args'=>$args, 'layout' => $layout, 'ext' => $ext) );
   if (function_exists('before_render'))
   { 
     list($content_or_func, $layout, $locals, $view_path) = before_render($content_or_func, $layout, $locals, $view_path); 
