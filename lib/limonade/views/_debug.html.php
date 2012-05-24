@@ -1,4 +1,4 @@
-<? if ( is_in_development() && option('debug') ): ?>
+<? if ( in_development_mode() && option('debug') ): ?>
   <? if(!$is_http_error): ?>
   <p>[<?php echo error_type($errno)?>]
     <?php echo $errstr?> (in <strong><?php echo $errfile?></strong> line <strong><?php echo $errline?></strong>)
