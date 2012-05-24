@@ -74,6 +74,9 @@ if (! defined('E_USER_DEPRECATED'))    { define('E_USER_DEPRECATED',   16384); }
 # for PHP 5.2.0 <
 if (! defined('E_RECOVERABLE_ERROR'))  { define('E_RECOVERABLE_ERROR', 4096);  }
 
+# 
+if (! defined('LIM_DEBUG_LOAD_ORDER'))  { define('LIM_DEBUG_LOAD_ORDER', FALSE);  }
+
 // -----
 // #### SETTING BASIC SECURITY
 
@@ -3308,6 +3311,7 @@ function load_core()
     {  
       halt(SERVER_ERROR, __FUNCTION__."(): Requested Core file [ $core_file ] was not found!");
     }
+    if ( LIM_DEBUG_LOAD_ORDER ) { error_log(__FUNCTION__ ."() loaded [ $core_file ]", 0); }
     require_once($core_file);
     $_cores[] = $core;
   }
@@ -3350,6 +3354,7 @@ function load_helper()
     { 
       halt(SERVER_ERROR, __FUNCTION__ . "(): Requested Helper file [$helper_file] was not found!"); 
     }
+    if ( LIM_DEBUG_LOAD_ORDER ) { error_log(__FUNCTION__ ."() loaded [ $helper_file ]", 0); }
     require_once $helper_file;
     $_helpers[] = $helper;
   }
@@ -3396,6 +3401,7 @@ function load_lext()
     { 
       halt(SERVER_ERROR, __FUNCTION__ . "(): Requested Lext file [$lext_file] was not found!"); 
     }
+    if ( LIM_DEBUG_LOAD_ORDER ) { error_log(__FUNCTION__ ."() loaded [ $lext_file ]", 0); }
     require_once($lext_file);
     $_lexts[] = $lext;
   }
@@ -3440,6 +3446,7 @@ function load_config()
     { 
       halt(SERVER_ERROR, "Requested Configuration file '$conf_file' was not found!"); 
     }
+    if ( LIM_DEBUG_LOAD_ORDER ) { error_log(__FUNCTION__ ."() loaded [ $conf_file ]", 0); }
     include($conf_file);
     $_configs[] = $conf;
   }
