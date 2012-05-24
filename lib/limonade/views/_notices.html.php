@@ -1,4 +1,4 @@
-<?php if(!empty($notices)): ?>
+<?php if (! empty($notices)): ?>
 <div class="lim-debug lim-notices">
   <h4> &#x2192; Notices and warnings</h4>
   <dl>

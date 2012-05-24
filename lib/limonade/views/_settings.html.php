@@ -358,7 +358,7 @@
   $(document).ready(function() {
     $('#settings.wrap div a.toggle').click(function() {
       var section = $(this).parent().attr('id');
-      $('#' + section + '-info').toggle('fast');
+      $('#' + section + '-info').fadeToggle("slow", "linear");
       $(this).text($(this).text() == 'SHOW' ? 'HIDE' : 'SHOW');
     });
   });
@@ -381,7 +381,7 @@
   #settings.wrap h3{ float:left;width:213px;margin: 30px 0 10px 0;color:#981919;font-size:14px;font-weight:bold;}
   #settings.wrap h3:hover { cursor: pointer; }
   #settings.wrap h3 span { font-size: 10px; color: #ccc; } 
-  #settings.wrap a.toggle { font-size: 10px; color: #ccc; float: right; margin: 34px 5px 0;} 
+  #settings.wrap a.toggle { font-size: 10px; color: #ccc; float: right; margin: 34px 5px 0; text-decoration: none;} 
   #settings.wrap a.toggle:hover { cursor: pointer; color: #981919;}
   /* BODY */
   #backtrace,#get,#post,#cookies, #server, #sessions, #files, #env, #delete, #head, #put, #options{width:960px;margin: 15px auto;}
